@@ -5,8 +5,8 @@ export interface Question {
   correctAnswer: number;
 }
 
-export interface QuestionSet {
-  setID: string;
+export interface QuestionCollection {
+  collectionID: string;
   title: string;
   tags: string[];
 }

@@ -1,26 +1,30 @@
 import React, { useEffect, useState } from 'react'
-import { redirect, useSearchParams } from 'react-router-dom'
+import type { Question } from '@/types';
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Button } from '@/components/ui/button';
-import { useQuizStore } from '@/store/quizStore';
-import type { Question } from '@/types'
+import { redirect, useSearchParams, Link } from 'react-router-dom'
+import { useAnswerListStore } from '@/store/answerList';
+import { useQuestionListStore } from '@/store/questionList';
 
 export const QuizView: React.FC = () => {
-  // const [currentSet, setCurrentSet] = useState<string>();
-  const [currentIndex, setCurrentIndex] = useState<number>(0); // Tracks current question
-  // const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const selectedAnswer = useQuizStore((state)=>state.selectAnswer)
-  const answers = useQuizStore((state)=>state.answers)
-  // const [showFeedback, setShowFeedback] = useState<boolean>(false);
-  const [questionList, setQuestionList] = useState<Question[]>();
-  // const [currentQuestion, setCurrentQuestion] = useState<Question>();
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  
+  const selectedAnswer = useAnswerListStore((state)=>state.selectAnswer)
+  const answers = useAnswerListStore((state)=>state.answers)
+
+  const setQuestionList = useQuestionListStore((state)=>state.setQuestionList)
+  const questionList = useQuestionListStore((state)=>state.questionList)
+  
   const [searchParams] = useSearchParams();
 
   useEffect(()=>{
-    if(searchParams.get('setid')){
-      fetch(import.meta.env.VITE_API_URL + '/question/'+searchParams.get('setid'))
+    console.log("something")
+    const collectionID = searchParams.get('collectionid');
+    console.log(collectionID)
+    if(collectionID){
+      fetch(import.meta.env.VITE_API_URL + '/collection/'+collectionID)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -28,6 +32,8 @@ export const QuizView: React.FC = () => {
         return response.json();
       })
       .then(data => {
+        debugger;
+        console.log(data["data"])
         const mappedData: Question[] = data["data"].map((item: any)=>{
           const { id, questionText, options, correctAnswer } = item
           return {
@@ -37,7 +43,7 @@ export const QuizView: React.FC = () => {
             correctAnswer: correctAnswer
           }
         })
-        
+        console.log(mappedData)
         setQuestionList(mappedData)
       })
       .catch(error => {
@@ -62,8 +68,6 @@ export const QuizView: React.FC = () => {
     }
   };
 
-  console.log("a");
-
   const answerStr = answers[currentIndex] ? answers[currentIndex].toString() : "" ;
 
   return (
@@ -71,10 +75,10 @@ export const QuizView: React.FC = () => {
       {/* Progress Bar Component can go here */}
       <p>Question {currentIndex + 1} of {questionList?.length}</p>
       
-      <h2>{questionList && questionList[currentIndex].questionText}</h2>
+      <h2>{questionList?.length > 0 && questionList[currentIndex].questionText}</h2>
       
       <RadioGroup className='grid md:grid-cols-2 gap-4' value={answerStr}>
-        {questionList && questionList[currentIndex].options.map((option, index) => (
+        {questionList?.length > 0 && questionList[currentIndex].options.map((option, index) => (
           <Card key={index} className="w-1/2 p-4 flex flex-row w-full text-left items-center" onClick={()=>handleAnswerSelect(index+1)}>
             <RadioGroupItem value={(index+1).toString()} id={`opt${index+1}`} className='flex-none'></RadioGroupItem>
             <Label htmlFor={`opt${index+1}`} className='grow'>{option}</Label>
@@ -84,7 +88,12 @@ export const QuizView: React.FC = () => {
 
       <div className='flex flex-wrap items-center gap-2 justify-center md:justify-end'>
         <Button onClick={()=>handleNav("prev")} variant={'outline'} aria-label='back' disabled={currentIndex == 0}>Previous</Button>
-        <Button onClick={()=>handleNav("next")}>Next</Button>
+        { currentIndex + 1 == questionList?.length
+          ? <Button asChild>
+              <Link to={"/quizresult"}>Result</Link>
+            </Button>
+          : <Button onClick={()=>handleNav("next")}>Next</Button> }
+        
       </div>
     </Card>
   );
