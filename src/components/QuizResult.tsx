@@ -16,12 +16,14 @@ export const QuizResult: React.FC = () => {
     <React.Fragment>
       <div className='grid gap-4 p-4 text-left'>
       {questionList.map((item, index) => {
+        const isCorrect = item.correctAnswer == answers[index]
         console.log(item)
         return (
-            <Card className='px-4'>
+            <Card className={`px-4 border ${isCorrect ? 'border-lime-400' : 'border-rose-400'}`}>
               <p>{item.questionText}</p>
               <p>Correct answer: {item.correctAnswer}</p>
               <p>Your answer: {answers[index]} - {item.options[answers[index]-1]}</p>
+              <p>{item.correctAnswer == answers[index] ? "Correct" : "Incorrect"}</p>
             </Card>
           )
       })}
