@@ -4,25 +4,21 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { redirect, useSearchParams, Link } from 'react-router-dom'
+import { redirect, Link } from 'react-router-dom'
 import { useAnswerListStore } from '@/store/answerList';
 import { useQuestionListStore } from '@/store/questionList';
 
 export const QuizView: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   
+  const collectionID = useQuestionListStore((state)=>state.collectionID)
+  const setQuestionList = useQuestionListStore((state)=>state.setQuestionList)
+  const questionList = useQuestionListStore((state)=>state.questionList)
+
   const selectedAnswer = useAnswerListStore((state)=>state.selectAnswer)
   const answers = useAnswerListStore((state)=>state.answers)
 
-  const setQuestionList = useQuestionListStore((state)=>state.setQuestionList)
-  const questionList = useQuestionListStore((state)=>state.questionList)
-  
-  const [searchParams] = useSearchParams();
-
   useEffect(()=>{
-    console.log("something")
-    const collectionID = searchParams.get('collectionid');
-    console.log(collectionID)
     if(collectionID){
       fetch(import.meta.env.VITE_API_URL + '/collection/'+collectionID)
       .then(response => {
@@ -32,18 +28,16 @@ export const QuizView: React.FC = () => {
         return response.json();
       })
       .then(data => {
-        debugger;
         console.log(data["data"])
-        const mappedData: Question[] = data["data"].map((item: any)=>{
-          const { id, questionText, options, correctAnswer } = item
+        const mappedData: Question[] = data["data"]["Question"].map((item: any)=>{
+          const { ID, QuestionText, Options, CorrectAnswer } = item
           return {
-            id: id,
-            questionText: questionText,
-            options: options,
-            correctAnswer: correctAnswer
+            id: ID,
+            questionText: QuestionText,
+            options: Options,
+            correctAnswer: CorrectAnswer
           }
         })
-        console.log(mappedData)
         setQuestionList(mappedData)
       })
       .catch(error => {
