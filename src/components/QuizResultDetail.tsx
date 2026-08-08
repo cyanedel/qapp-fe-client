@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Card } from '@/components/ui/card'
+// import { Card } from '@/components/ui/card'
 import { useNavigate, useParams } from 'react-router-dom';
 import { useScoreHistoryStore } from '@/store/useScoreHistoryStore';
 
