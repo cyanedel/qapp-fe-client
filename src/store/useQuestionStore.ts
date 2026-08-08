@@ -1,15 +1,15 @@
 import { create } from 'zustand';
 
-interface StateAnswerList {
+interface QuestionState {
   collectionID: string
   score: number;
   answers: Record<number, number>;
   setCollectionID: (setID: string) => void,
   selectAnswer: (questionId: number, answerIndex: number) => void;
-  resetState: () => void;
+  reset: () => void;
 }
 
-export const useAnswerListStore = create<StateAnswerList>((set) => ({
+export const useQuestionStore = create<QuestionState>((set) => ({
   collectionID: "",
   score: 0,
   answers: {},
@@ -26,7 +26,7 @@ export const useAnswerListStore = create<StateAnswerList>((set) => ({
     }))
   },
 
-  resetState: () => {
+  reset: () => {
     set(()=>({
       collectionID : "",
       score: 0,

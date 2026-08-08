@@ -4,30 +4,24 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom'
 import type { QuestionCollection } from '@/types';
-import { useQuestionListStore } from '@/store/questionList';
-import { useAnswerListStore } from '@/store/answerList';
+import { useCollectionStore } from '@/store/useCollectionStore';
+import { useQuestionStore } from '@/store/useQuestionStore';
+import { getCollectionList } from '@/api/collection';
 
 export const Home: React.FC = () => {
   const [collectionList, setCollectionList] = useState<QuestionCollection[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const setCollectionID = useQuestionListStore((state)=>state.setCollectionID)
-  const resetCollection = useQuestionListStore((state)=>state.reset)
-  const resetAnswers = useAnswerListStore((state)=>state.resetState)
+  const setCollectionID = useCollectionStore((state)=>state.setCollectionID)
+  const resetCollection = useCollectionStore((state)=>state.reset)
+  const resetAnswers = useQuestionStore((state)=>state.reset)
   const navigate = useNavigate();
 
   useEffect(()=>{
     resetCollection();
     resetAnswers();
 
-    fetch(import.meta.env.VITE_API_URL + '/collection/list')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      const mappedData: QuestionCollection[] = data["data"].map((item: any)=>{
+    getCollectionList().then(data => {
+      const mappedData: QuestionCollection[] = data.map((item: any)=>{
         const { collectionid, title, tags } = item
         return {
           collectionID: collectionid,
@@ -48,7 +42,7 @@ export const Home: React.FC = () => {
 
   const handleSelectCollectionID = (collectionID: string) => {
     setCollectionID(collectionID);
-    navigate("/quiz?collectionid="+collectionID);
+    navigate("/collection?collectionid=" + collectionID);
   }
 
   return(
