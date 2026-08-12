@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react'
-// import { Card } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { useNavigate, useParams } from 'react-router-dom';
-import { useScoreHistoryStore } from '@/store/useScoreHistoryStore';
+// import { useScoreHistoryStore } from '@/store/useScoreHistoryStore';
+import { useCollectionStore } from '@/store/useCollectionStore'
 
 type QueryParams = {
   result_index?: string;
 };
 
 export const QuizResultDetail: React.FC = () => {
-  const scoreHistory = useScoreHistoryStore((state)=>state.scoreHistory);
+  // const scoreHistory = useScoreHistoryStore((state)=>state.scoreHistory);
   const navigate = useNavigate();
   const { result_index } = useParams<QueryParams>();
+  const questionList = useCollectionStore((state) => state.questionList);
 
   const scoreIndex = Number(result_index); 
   const isValidIndex: Boolean = scoreIndex != undefined && Number.isNaN(scoreIndex);
@@ -28,21 +30,18 @@ export const QuizResultDetail: React.FC = () => {
     }
   },[isValidIndex]);
 
-  const {} = scoreHistory[scoreIndex]
+  // const {} = scoreHistory[scoreIndex]
   return (
     <React.Fragment>
+      <p>Some text</p>
       <div className='grid gap-4 p-4 text-left'>
-      {/* {
+      {questionList && questionList.map((item, index)=>{
         return (
-          <Card key={index} className='px-4'>
-            <div>
-              Attempt ID: {item.attempt_id}<br />
-              Score: {item.score}/{item.total_questions} ( {item.percentage}% )<br />
-              Completion time: {item.completed_at}
-            </div>
-          </Card>
+        <Card key={index} className='px-4'>
+          {item.questionText}
+        </Card>
         )
-      })} */}
+      })}
       </div>
     </React.Fragment>
   );
