@@ -144,7 +144,7 @@ export const Login: React.FC = () => {
             </Button>
 
             {/* Quick Demo Credentials Panel */}
-            <div className="pt-4 border-t border-border/40 space-y-2">
+            <div className="pt-4 border-t border-border/40 space-y-2 hidden">
               <p className="text-xs font-medium text-muted-foreground text-center">
                 Quick Demo Accounts (Click to test):
               </p>

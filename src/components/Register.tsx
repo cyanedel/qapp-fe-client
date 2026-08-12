@@ -154,7 +154,7 @@ export const Register: React.FC = () => {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full font-medium" disabled={loading}>
+                <Button type="submit" className="mb-4 w-full font-medium" disabled={loading}>
                   {loading ? (
                     <>
                       <Spinner className="mr-2 h-4 w-4" /> Creating account...
