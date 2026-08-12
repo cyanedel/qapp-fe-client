@@ -5,10 +5,53 @@ import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { useCollectionStore } from '@/store/useCollectionStore'
 import { useAuthStore } from '@/store/useAuthStore'
-import type { Question } from '@/types'
-import { ShieldAlert, CheckCircle2, History } from 'lucide-react'
+import { useScoreHistoryStore } from '@/store/useScoreHistoryStore'
+import type { Question, ScoreHistory } from '@/types'
+import { ShieldAlert, CheckCircle2, Trophy, Clock, Target, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { getCollectionByCollectionID, startQuestion } from '@/api/collection';
 import { getUserAccessStatus } from '@/api/user';
+import { getScoreHistory } from '@/api/history';
+
+const formatDate = (dateString: string): string => {
+  try {
+    const date = new Date(dateString)
+    return date.toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }) + ' at ' + date.toLocaleTimeString(undefined, {
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  } catch {
+    return dateString
+  }
+}
+
+const getScoreColor = (percentage: number): string => {
+  if (percentage >= 80) return 'text-emerald-500'
+  if (percentage >= 60) return 'text-amber-500'
+  return 'text-rose-500'
+}
+
+const getScoreBgColor = (percentage: number): string => {
+  if (percentage >= 80) return 'bg-emerald-500'
+  if (percentage >= 60) return 'bg-amber-500'
+  return 'bg-rose-500'
+}
+
+const getScoreBadgeBg = (percentage: number): string => {
+  if (percentage >= 80) return 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/25'
+  if (percentage >= 60) return 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/25'
+  return 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/25'
+}
+
+const getTrendIcon = (current: ScoreHistory, previous: ScoreHistory | undefined) => {
+  if (!previous) return null
+  if (current.percentage > previous.percentage) return <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
+  if (current.percentage < previous.percentage) return <TrendingDown className="h-3.5 w-3.5 text-rose-500" />
+  return <Minus className="h-3.5 w-3.5 text-muted-foreground" />
+}
 
 export const CollectionInfo: React.FC = () => {
   const [searchParams] = useSearchParams()
@@ -26,9 +69,14 @@ export const CollectionInfo: React.FC = () => {
   const [maxAttempts, setMaxAttempts] = useState<number | null>(null)
   const [accessMessage, setAccessMessage] = useState<string>('')
 
+  const [scoreHistory, setScoreHistory] = useState<ScoreHistory[]>([])
+  const [historyLoading, setHistoryLoading] = useState<boolean>(false)
+
   const setCollectionID = useCollectionStore((state) => state.setCollectionID)
   const setQuestionList = useCollectionStore((state) => state.setQuestionList)
   const questionList = useCollectionStore((state) => state.questionList)
+
+  const setScoreHistoryStore = useScoreHistoryStore((state) => state.setScoreHistory)
 
   const navigate = useNavigate()
 
@@ -70,8 +118,18 @@ export const CollectionInfo: React.FC = () => {
           setAccessMessage(accessData.message)
         })
         .catch((err) => console.error('Access check failed:', err))
+
+      setHistoryLoading(true)
+      getScoreHistory(user.user_id, collectionIDFromUrl)
+        .then((data) => {
+          if (data) {
+            setScoreHistory(data)
+            setScoreHistoryStore(data)
+          }
+        })
+        .finally(() => setHistoryLoading(false))
     }
-  }, [collectionIDFromUrl, setCollectionID, setQuestionList, navigate, user?.user_id])
+  }, [collectionIDFromUrl, setCollectionID, setQuestionList, navigate, user?.user_id, setScoreHistoryStore])
 
   const handleStartQuestions = async () => {
     if (!canAccess) return
@@ -90,9 +148,17 @@ export const CollectionInfo: React.FC = () => {
     navigate('/quiz?collectionid=' + collectionIDFromUrl)
   }
 
-  const handleViewPreviousResults = () => {
-    navigate('/quizresult')
+  const handleViewDetails = (index: number) => {
+    navigate(`/quizresultdetail?result_index=${index}`)
   }
+
+  const bestScore = scoreHistory.length > 0
+    ? Math.max(...scoreHistory.map(s => s.percentage))
+    : null
+
+  const avgScore = scoreHistory.length > 0
+    ? Math.round(scoreHistory.reduce((sum, s) => sum + s.percentage, 0) / scoreHistory.length)
+    : null
 
   if (isLoading) {
     return (
@@ -117,7 +183,7 @@ export const CollectionInfo: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto max-w-2xl px-4 py-8">
+    <div className="container mx-auto max-w-2xl px-4 py-8 space-y-6">
       <Card className="p-6">
         <CardHeader className="px-0 pt-0">
           <CardTitle className="text-2xl font-bold">{title}</CardTitle>
@@ -169,19 +235,123 @@ export const CollectionInfo: React.FC = () => {
           )}
         </CardContent>
 
-        <CardFooter className="px-0 pb-0 pt-4 flex flex-col sm:flex-row gap-3">
+        <CardFooter className="px-0 pb-0 pt-4">
           <Button
-            className="w-full sm:w-1/2"
+            className="w-full"
             onClick={handleStartQuestions}
             disabled={!canAccess}
           >
             Start Questions
           </Button>
-          <Button className="w-full sm:w-1/2" variant="outline" onClick={handleViewPreviousResults}>
-            <History className="mr-2 h-4 w-4" /> Previous Results
-          </Button>
         </CardFooter>
       </Card>
+
+      {/* Score History Section */}
+      {user && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Trophy className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold">Previous Results</h2>
+            {scoreHistory.length > 0 && (
+              <span className="ml-auto text-xs font-medium text-muted-foreground bg-muted rounded-full px-2.5 py-0.5">
+                {scoreHistory.length} attempt{scoreHistory.length !== 1 ? 's' : ''}
+              </span>
+            )}
+          </div>
+
+          {/* Summary Stats */}
+          {scoreHistory.length > 0 && (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl border bg-card p-4 space-y-1">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <Trophy className="h-3.5 w-3.5" />
+                  Best Score
+                </div>
+                <p className={`text-2xl font-bold ${getScoreColor(bestScore!)}`}>
+                  {bestScore}%
+                </p>
+              </div>
+              <div className="rounded-xl border bg-card p-4 space-y-1">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <Target className="h-3.5 w-3.5" />
+                  Average
+                </div>
+                <p className={`text-2xl font-bold ${getScoreColor(avgScore!)}`}>
+                  {avgScore}%
+                </p>
+              </div>
+            </div>
+          )}
+
+          {historyLoading ? (
+            <div className="flex items-center justify-center py-8 text-muted-foreground">
+              <Spinner className="size-6 mr-2" />
+              <span className="text-sm">Loading history...</span>
+            </div>
+          ) : scoreHistory.length === 0 ? (
+            <Card className="p-6">
+              <div className="flex flex-col items-center justify-center text-center py-4 space-y-2">
+                <div className="rounded-full bg-muted p-3">
+                  <Clock className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <p className="text-sm font-medium text-muted-foreground">No attempts yet</p>
+                <p className="text-xs text-muted-foreground/70">
+                  Start the quiz to see your results here.
+                </p>
+              </div>
+            </Card>
+          ) : (
+            <div className="space-y-3">
+              {scoreHistory.map((item, index) => (
+                <Card
+                  key={item.attempt_id}
+                  className="group relative overflow-hidden transition-all duration-200 hover:shadow-md"
+                  // onClick={() => handleViewDetails(index)}
+                >
+                  <div className="p-4 space-y-3">
+                    {/* Top row: attempt number + percentage badge */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-foreground">
+                          Attempt #{scoreHistory.length - index}
+                        </span>
+                        {getTrendIcon(item, scoreHistory[index + 1])}
+                      </div>
+                      <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-bold ${getScoreBadgeBg(item.percentage)}`}>
+                        {item.percentage}%
+                      </span>
+                    </div>
+
+                    {/* Score bar */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>{item.score} / {item.total_questions} correct</span>
+                      </div>
+                      <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-700 ease-out ${getScoreBgColor(item.percentage)}`}
+                          style={{ width: `${item.percentage}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Bottom row: timestamp */}
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      <span>{formatDate(item.completed_at)}</span>
+                    </div>
+                  </div>
+
+                  {/* Hover indicator */}
+                  {/* <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <span className="text-xs font-medium text-primary">View Details →</span>
+                  </div> */}
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
