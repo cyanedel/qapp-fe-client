@@ -148,9 +148,9 @@ export const CollectionInfo: React.FC = () => {
     navigate('/quiz?collectionid=' + collectionIDFromUrl)
   }
 
-  const handleViewDetails = (index: number) => {
-    navigate(`/quizresultdetail?result_index=${index}`)
-  }
+  // const handleViewDetails = (index: number) => {
+  //   navigate(`/quizresultdetail?result_index=${index}`)
+  // }
 
   const bestScore = scoreHistory.length > 0
     ? Math.max(...scoreHistory.map(s => s.percentage))
