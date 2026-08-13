@@ -56,12 +56,12 @@ export const Login: React.FC = () => {
       
       <Card className="w-full max-w-md shadow-2xl border-border/50 bg-card/95 backdrop-blur-md">
         <CardHeader className="space-y-2 text-center pb-6">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary mb-2 ring-1 ring-primary/20">
-            <Sparkles className="h-6 w-6" />
+          <div className="mx-auto flex w-32 items-center justify-center">
+            <img src="/potero_text.svg" alt="Potero" />
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight">Welcome back</CardTitle>
           <CardDescription className="text-muted-foreground">
-            Sign in to your QApp account to access collections & quizzes
+            Sign in to your Potero account to access collections & quizzes
           </CardDescription>
         </CardHeader>
 
