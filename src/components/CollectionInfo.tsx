@@ -148,10 +148,6 @@ export const CollectionInfo: React.FC = () => {
     navigate('/quiz?collectionid=' + collectionIDFromUrl)
   }
 
-  // const handleViewDetails = (index: number) => {
-  //   navigate(`/quizresultdetail?result_index=${index}`)
-  // }
-
   const bestScore = scoreHistory.length > 0
     ? Math.max(...scoreHistory.map(s => s.percentage))
     : null
@@ -306,7 +302,6 @@ export const CollectionInfo: React.FC = () => {
                 <Card
                   key={item.attempt_id}
                   className="group relative overflow-hidden transition-all duration-200 hover:shadow-md"
-                  // onClick={() => handleViewDetails(index)}
                 >
                   <div className="p-4 space-y-3">
                     {/* Top row: attempt number + percentage badge */}

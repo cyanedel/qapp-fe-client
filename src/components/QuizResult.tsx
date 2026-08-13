@@ -5,10 +5,11 @@ import { Spinner } from '@/components/ui/spinner'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useCollectionStore } from '@/store/useCollectionStore'
 import { getScoreHistory } from '@/api/history'
-import type { ScoreHistory } from '@/types'
 import { CheckCircle2, Clock, ArrowLeft } from 'lucide-react'
+import { env } from '@/config/env';
+import type { ScoreHistory } from '@/types'
 
-const REDIRECT_SECONDS = 5
+const REDIRECT_SECONDS = env.TIMEOUT_UI / 1000
 
 export const QuizResult: React.FC = () => {
   const { user } = useAuthStore()

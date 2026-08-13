@@ -34,8 +34,9 @@ export const Login: React.FC = () => {
       const data = await loginUser(email, password)
       setUser(data.user)
       navigate('/home')
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong. Please try again.')
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Something went wrong. Please try again.'
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

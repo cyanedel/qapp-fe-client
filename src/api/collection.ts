@@ -1,7 +1,7 @@
 import { env } from '@/config/env';
 
 export const getCollectionList = () => {
-  return fetch(API_URL + '/collection/list')
+  return fetch(env.API_URL + '/collection/list')
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok');

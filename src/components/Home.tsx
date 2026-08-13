@@ -15,13 +15,19 @@ export const Home: React.FC = () => {
   const resetCollection = useCollectionStore((state)=>state.reset)
   const resetAnswers = useQuestionStore((state)=>state.reset)
   const navigate = useNavigate();
+  
+  type RawCollectionItem = {
+    collectionid: string;
+    title: string;
+    tags: string[];
+  };
 
   useEffect(()=>{
     resetCollection();
     resetAnswers();
 
     getCollectionList().then(data => {
-      const mappedData: QuestionCollection[] = data.map((item: any)=>{
+      const mappedData: QuestionCollection[] = data.map((item: RawCollectionItem)=>{
         const { collectionid, title, tags } = item
         return {
           collectionID: collectionid,
@@ -38,7 +44,7 @@ export const Home: React.FC = () => {
     .finally(() => {
       setIsLoading(false)
     });
-  }, [])
+  }, [resetAnswers, resetCollection])
 
   const handleSelectCollectionID = (collectionID: string) => {
     setCollectionID(collectionID);

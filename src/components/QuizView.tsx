@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import type { Question } from '@/types';
+import React, { useState } from 'react'
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
@@ -16,43 +15,10 @@ export const QuizView: React.FC = () => {
 
   const { user } = useAuthStore();
   
-  const collectionID = useCollectionStore((state)=>state.collectionID)
-  const setQuestionList = useCollectionStore((state)=>state.setQuestionList)
   const questionList = useCollectionStore((state)=>state.questionList)
 
   const selectedAnswer = useQuestionStore((state)=>state.selectAnswer)
   const answers = useQuestionStore((state)=>state.answers)
-
-  useEffect(()=>{
-    if(collectionID){
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-      fetch(API_URL + '/collection/'+collectionID)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        const rawQuestions = data["data"]["Question"] || data["data"]["question"] || []
-        const mappedData: Question[] = rawQuestions.map((item: any)=>{
-          const { ID, id, QuestionText, questionText, Options, options, CorrectAnswer, correctAnswer } = item
-          return {
-            id: ID || id,
-            questionText: QuestionText || questionText,
-            options: Options || options,
-            correctAnswer: CorrectAnswer || correctAnswer
-          }
-        })
-        setQuestionList(mappedData)
-      })
-      .catch(error => {
-        console.error('Fetch error:', error);
-      });
-    } else {
-      navigate('/home')
-    }
-  }, [collectionID, navigate, setQuestionList])
 
   const handleAnswerSelect = (answerIndex: number) => {
     selectedAnswer(currentIndex, answerIndex);

@@ -3,8 +3,8 @@ import { CollectionInfo } from "@/components/CollectionInfo"
 import { Home } from "@/components/Home"
 import { Login } from "@/components/Login"
 import { NavBar } from "@/components/NavBar"
+import { NotFound } from "@/components/NotFound"
 import { QuizResult } from "@/components/QuizResult"
-import { QuizResultDetail } from "@/components/QuizResultDetail"
 import { QuizView } from "@/components/QuizView"
 import { Register } from "@/components/Register"
 import { useAuthStore } from "@/store/useAuthStore"
@@ -29,8 +29,9 @@ function App() {
             <Route path="/collection" element={<CollectionInfo />} />
             <Route path="/quiz" element={<QuizView />} />
             <Route path="/quizresult" element={<QuizResult />} />
-            <Route path="/quizresultdetail" element={<QuizResultDetail />} />
           </Route>
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
     </div>

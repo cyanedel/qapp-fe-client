@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { registerUser } from '@/api/register'
 import { Mail, Lock, Eye, EyeOff, UserPlus, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { env } from '@/config/env';
 
 export const Register: React.FC = () => {
   const navigate = useNavigate()
@@ -25,7 +26,7 @@ export const Register: React.FC = () => {
 
     const redirectTimer = window.setTimeout(() => {
       navigate('/login')
-    }, 5000)
+    }, env.TIMEOUT_UI)
 
     return () => window.clearTimeout(redirectTimer)
   }, [navigate, registered])
@@ -44,8 +45,9 @@ export const Register: React.FC = () => {
     try {
       await registerUser(email, password)
       setRegistered(true)
-    } catch (err: any) {
-      setError(err.message || 'Registration failed. Please try again.')
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Registration failed. Please try again.' ;
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
