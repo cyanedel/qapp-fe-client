@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
+import { loginUser } from '@/api/auth'
 import { Mail, Lock, Eye, EyeOff, LogIn, Sparkles, AlertCircle, Shield, UserCheck, Crown } from 'lucide-react'
 
 export const Login: React.FC = () => {
@@ -18,9 +19,7 @@ export const Login: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError(null)
 
@@ -32,20 +31,7 @@ export const Login: React.FC = () => {
     setLoading(true)
 
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to login')
-      }
-
+      const data = await loginUser(email, password)
       setUser(data.user)
       navigate('/home')
     } catch (err: any) {
@@ -144,7 +130,7 @@ export const Login: React.FC = () => {
             </Button>
 
             {/* Quick Demo Credentials Panel */}
-            <div className="pt-4 border-t border-border/40 space-y-2 hidden">
+            <div className="pt-4 border-t border-border/40 space-y-2">
               <p className="text-xs font-medium text-muted-foreground text-center">
                 Quick Demo Accounts (Click to test):
               </p>

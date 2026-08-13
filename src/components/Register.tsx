@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
+import { registerUser } from '@/api/register'
 import { Mail, Lock, Eye, EyeOff, UserPlus, AlertCircle, CheckCircle2 } from 'lucide-react'
 
 export const Register: React.FC = () => {
@@ -16,8 +17,6 @@ export const Register: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [registered, setRegistered] = useState(false)
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
   useEffect(() => {
     if (!registered) {
@@ -43,23 +42,7 @@ export const Register: React.FC = () => {
     setLoading(true)
 
     try {
-      const response = await fetch(`${API_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to register account')
-      }
-
+      await registerUser(email, password)
       setRegistered(true)
     } catch (err: any) {
       setError(err.message || 'Registration failed. Please try again.')

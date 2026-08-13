@@ -1,7 +1,7 @@
-const API_URL = import.meta.env.VITE_API_URL;
+import { env } from '@/config/env';
 
 export const getScoreHistory = (user_id: string, collection_id: string) => {
-  return fetch(`${API_URL}/user/history?user_id=${user_id}&collection_id=${collection_id}`)
+  return fetch(`${env.API_URL}/user/history?user_id=${user_id}&collection_id=${collection_id}`)
       .then((res) => res.json())
       .then((data) => {
         return data["history"];

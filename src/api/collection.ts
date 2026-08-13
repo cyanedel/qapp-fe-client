@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL;
+import { env } from '@/config/env';
 
 export const getCollectionList = () => {
   return fetch(API_URL + '/collection/list')
@@ -17,7 +17,7 @@ export const getCollectionList = () => {
 }
 
 export const getCollectionByCollectionID = (collection_id: string) => {
-  return fetch(`${API_URL}/collection/${collection_id}`)
+  return fetch(`${env.API_URL}/collection/${collection_id}`)
     .then((res) => {
       if (!res.ok) throw new Error('Failed to fetch collection details')
       return res.json()
@@ -32,7 +32,7 @@ export const getCollectionByCollectionID = (collection_id: string) => {
 }
 
 export const startQuestion = (collection_id: string, user_id: string) => {
-  return fetch(`${API_URL}/quiz/start`, {
+  return fetch(`${env.API_URL}/quiz/start`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
