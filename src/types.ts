@@ -21,6 +21,7 @@ export interface Question {
 export interface QuestionCollection {
   collectionID: string;
   title: string;
+  description: string;
   tags: string[];
 }
 

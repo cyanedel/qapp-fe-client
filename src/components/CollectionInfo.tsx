@@ -60,6 +60,7 @@ export const CollectionInfo: React.FC = () => {
   const { user } = useAuthStore()
 
   const [title, setTitle] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
   const [tags, setTags] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -90,6 +91,7 @@ export const CollectionInfo: React.FC = () => {
 
     getCollectionByCollectionID(collectionIDFromUrl).then((data)=>{
       setTitle(data.Title || data.title || 'Question Set')
+      setDescription(data.Description || data.description || '')
       setTags(data.Tags || data.tags || [])
 
       const rawQuestions = data.Question || data.question || []
@@ -183,6 +185,7 @@ export const CollectionInfo: React.FC = () => {
       <Card className="p-6">
         <CardHeader className="px-0 pt-0">
           <CardTitle className="text-2xl font-bold">{title}</CardTitle>
+          <p>{description}</p>
           {tags && tags.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-2">
               {tags.map((tag, idx) => (

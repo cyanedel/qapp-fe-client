@@ -18,6 +18,7 @@ export const Home: React.FC = () => {
   
   type RawCollectionItem = {
     collectionid: string;
+    description: string;
     title: string;
     tags: string[];
   };
@@ -28,9 +29,10 @@ export const Home: React.FC = () => {
 
     getCollectionList().then(data => {
       const mappedData: QuestionCollection[] = data.map((item: RawCollectionItem)=>{
-        const { collectionid, title, tags } = item
+        const { collectionid, title, description, tags } = item
         return {
           collectionID: collectionid,
+          description: description,
           title: title,
           tags: tags
         }
