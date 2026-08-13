@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { loginUser } from '@/api/auth'
-import { Mail, Lock, Eye, EyeOff, LogIn, Sparkles, AlertCircle, Shield, UserCheck, Crown } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Shield, UserCheck, Crown } from 'lucide-react'
 
 export const Login: React.FC = () => {
   const navigate = useNavigate()
