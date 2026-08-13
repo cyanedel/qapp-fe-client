@@ -9,6 +9,7 @@ export default defineConfig([
   globalIgnores(['dist']),
   {
     files: ['**/*.{ts,tsx}'],
+    ignores: ['src/config/env.ts', 'src/env.ts'],
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,
@@ -18,5 +19,18 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+    'no-restricted-syntax': [
+      'error',
+      {
+        "selector": "MemberExpression[object.type='MetaProperty'][object.meta.name='import'][object.property.name='meta'][property.name='env']",
+        "message": "Do not access import.meta.env directly. Import from '@/config/env' instead."
+      }
+    ],
+    'react-refresh/only-export-components': [
+      'warn',
+      { allowConstantExport: true },
+    ],
+  }
   },
 ])
