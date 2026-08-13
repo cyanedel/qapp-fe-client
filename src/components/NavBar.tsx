@@ -41,10 +41,8 @@ export const NavBar: React.FC = () => {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center space-x-6">
           <Link to="/" className="font-bold text-lg tracking-tight flex items-center gap-2">
-            <div className="h-7 w-7 rounded-lg bg-primary flex items-center justify-center text-primary-foreground text-sm font-black">
-              Q
-            </div>
-            QApp
+            <img src="/potero_p_icon.svg" alt="Potero" className="h-7 w-7" />
+            <img src="/potero_text.svg" alt="Potero" className="h-7" />
           </Link>
           {/* <nav className="flex items-center space-x-1">
             <Button variant="ghost" asChild>
