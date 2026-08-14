@@ -28,7 +28,7 @@ export const QuizResult: React.FC = () => {
       return
     }
 
-    getScoreHistory(user.user_id, collectionID)
+    getScoreHistory(collectionID)
       .then((data: ScoreHistory[] | null) => {
         if (data && data.length > 0) {
           setLatestScore(data[0])

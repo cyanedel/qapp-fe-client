@@ -20,14 +20,14 @@ export const UserDetails: React.FC = () => {
       setLoading(true)
       setError(null)
 
-      if (!authUser?.user_id) {
-        setError('Unable to load account information without a user ID.')
+      if (!authUser) {
+        setError('Unable to load account information without an active session.')
         setLoading(false)
         return
       }
 
       try {
-        const currentUser = await getCurrentUser(authUser.user_id)
+        const currentUser = await getCurrentUser()
 
         if (isMounted) {
           setProfile(currentUser)
@@ -49,7 +49,7 @@ export const UserDetails: React.FC = () => {
     return () => {
       isMounted = false
     }
-  }, [authUser?.user_id, setProfile])
+  }, [authUser, setProfile])
 
   const joinedDate = useMemo(() => {
     if (!profile?.created_at) {

@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { useQuestionStore } from '@/store/useQuestionStore';
 import { useCollectionStore } from '@/store/useCollectionStore';
 import { useAuthStore } from '@/store/useAuthStore';
+import { handleAuthResponse } from '@/api/auth';
 
 export const QuizView: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -44,15 +45,17 @@ export const QuizView: React.FC = () => {
           selected_option: selected,
         }))
 
-        await fetch(`${API_URL}/quiz/submit`, {
+        const response = await fetch(`${API_URL}/quiz/submit`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({
             attempt_id: attemptID,
             user_id: user.user_id,
             answers: formattedAnswers,
           }),
         })
+        handleAuthResponse(response)
         sessionStorage.removeItem('current_attempt_id')
       } catch (err) {
         console.error('Failed to submit quiz attempt to backend:', err)

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { logoutUser } from '@/api/auth'
 import { useAuthStore } from '@/store/useAuthStore'
 import { LogIn, LogOut, User as UserIcon, Shield, Crown, UserCheck } from 'lucide-react'
 
@@ -8,7 +9,12 @@ export const NavBar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuthStore()
   const navigate = useNavigate()
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await logoutUser()
+    } catch (err) {
+      console.error('Logout failed:', err)
+    }
     logout()
     navigate('/login')
   }

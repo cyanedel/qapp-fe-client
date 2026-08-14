@@ -112,7 +112,7 @@ export const CollectionInfo: React.FC = () => {
     })
 
     if (user?.user_id) {
-      getUserAccessStatus(collectionIDFromUrl, user?.user_id)
+      getUserAccessStatus(collectionIDFromUrl)
         .then((accessData) => {
           setCanAccess(accessData.can_access)
           setAttemptsUsed(accessData.attempts_used)
@@ -122,7 +122,7 @@ export const CollectionInfo: React.FC = () => {
         .catch((err) => console.error('Access check failed:', err))
 
       setHistoryLoading(true)
-      getScoreHistory(user.user_id, collectionIDFromUrl)
+      getScoreHistory(collectionIDFromUrl)
         .then((data) => {
           if (data) {
             setScoreHistory(data)
