@@ -68,15 +68,12 @@ export const UserDetails: React.FC = () => {
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Account information</h1>
-          <p className="mt-1 text-sm text-muted-foreground">View your Potero profile details.</p>
-        </div>
-        <Button type="button" className="w-full sm:w-auto">
-          <Edit3 className="h-4 w-4" />
-          Edit profile
-        </Button>
+      <div className="space-y-2">
+        <p className="text-sm font-medium text-primary">Profile</p>
+        <h1 className="text-3xl font-bold tracking-tight">Account information</h1>
+        <p className="text-sm text-muted-foreground">
+          View and manage your Potero profile details.
+        </p>
       </div>
 
       {error && (
@@ -88,22 +85,29 @@ export const UserDetails: React.FC = () => {
 
       <Card className="border-border/50 shadow-lg">
         <CardHeader className="border-b">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            {profile?.avatar_url ? (
-              <img
-                src={profile.avatar_url}
-                alt={displayName}
-                className="h-20 w-20 rounded-full object-cover ring-1 ring-border"
-              />
-            ) : (
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-2xl font-semibold text-primary ring-1 ring-primary/20">
-                {avatarInitial}
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              {profile?.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt={displayName}
+                  className="h-20 w-20 rounded-full object-cover ring-1 ring-border"
+                />
+              ) : (
+                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-2xl font-semibold text-primary ring-1 ring-primary/20">
+                  {avatarInitial}
+                </div>
+              )}
+              <div>
+                <CardTitle className="text-2xl font-semibold">{loading ? 'Loading profile...' : displayName}</CardTitle>
+                <CardDescription>{profile?.email || 'Account details will appear here.'}</CardDescription>
               </div>
-            )}
-            <div>
-              <CardTitle className="text-2xl font-semibold">{loading ? 'Loading profile...' : displayName}</CardTitle>
-              <CardDescription>{profile?.email || 'Account details will appear here.'}</CardDescription>
             </div>
+
+            <Button type="button" className="w-full sm:w-auto">
+              <Edit3 className="h-4 w-4" />
+              Edit profile
+            </Button>
           </div>
         </CardHeader>
 
