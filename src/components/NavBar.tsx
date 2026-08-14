@@ -1,13 +1,18 @@
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { logoutUser } from '@/api/auth'
 import { useAuthStore } from '@/store/useAuthStore'
-import { LogIn, LogOut, User as UserIcon, Shield, Crown, UserCheck } from 'lucide-react'
+import { useTheme } from '@/components/ThemeProvider'
+import { cn } from '@/lib/utils'
+import { LogIn, LogOut, User as UserIcon, Shield, Crown, UserCheck, Moon, Sun } from 'lucide-react'
 
 export const NavBar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuthStore()
+  const { theme, toggleTheme } = useTheme()
+  const location = useLocation()
   const navigate = useNavigate()
+  const isLoginRoute = location.pathname === '/login'
 
   const handleLogout = async () => {
     try {
@@ -47,12 +52,19 @@ export const NavBar: React.FC = () => {
   }
 
   return (
-    <header className="border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b backdrop-blur-sm",
+        isLoginRoute
+          ? "border-amber-900/10 bg-[#FFFAE5]/90 dark:border-border dark:bg-background/95"
+          : "bg-background/95"
+      )}
+    >
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center space-x-6">
           <Link to="/" className="font-bold text-lg tracking-tight flex items-center gap-2">
-            <img src="/potero_p_icon.svg" alt="Potero" className="h-7 w-7" />
-            <img src="/potero_text.svg" alt="Potero" className="h-7" />
+            <img src={theme === 'light' ? '/potero_alt_p_icon.svg' : '/potero_p_icon.svg'} alt="Potero" className="h-7 w-7" />
+            <img src={theme === 'light' ? '/potero_alt_text.svg' : '/potero_text.svg'} alt="Potero" className="h-7" />
           </Link>
           {/* <nav className="flex items-center space-x-1">
             <Button variant="ghost" asChild>
@@ -65,6 +77,18 @@ export const NavBar: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-3">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-sm"
+            onClick={toggleTheme}
+            className={cn(isLoginRoute && "border-amber-900/15 bg-[#FFF4CC]/80 hover:bg-[#F5E6B8]/80 dark:border-border dark:bg-transparent dark:hover:bg-input/30")}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
+
           {isAuthenticated && user ? (
             <div className="flex items-center gap-3">
               <button

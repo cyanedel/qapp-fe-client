@@ -9,9 +9,11 @@ import { QuizResult } from "@/components/QuizResult"
 import { QuizView } from "@/components/QuizView"
 import { Register } from "@/components/Register"
 import { UserDetails } from "@/components/UserDetails"
+import { ThemeProvider } from "@/components/ThemeProvider"
 import { AUTH_SESSION_EXPIRED_EVENT, validateCurrentSession } from "@/api/auth"
 import { Spinner } from "@/components/ui/spinner"
 import { useAuthStore } from "@/store/useAuthStore"
+import { cn } from "@/lib/utils"
 
 function App() {
   const navigate = useNavigate()
@@ -57,6 +59,14 @@ function App() {
     return () => window.removeEventListener(AUTH_SESSION_EXPIRED_EVENT, handleSessionExpired)
   }, [logout, navigate])
 
+  useEffect(() => {
+    const isLoginRoute = location.pathname === '/login'
+
+    document.body.classList.toggle('login-light-surface', isLoginRoute)
+
+    return () => document.body.classList.remove('login-light-surface')
+  }, [location.pathname])
+
   const ProtectedRoute = () => {
     if (!authChecked) {
       return <AuthLoading />
@@ -74,28 +84,35 @@ function App() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground antialiased">
-      <NavBar />
-      <main className="flex-1">
-        <Routes>
-          <Route element={<PublicOnlyRoute />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-          </Route>
+    <ThemeProvider>
+      <div
+        className={cn(
+          "flex min-h-screen flex-col text-foreground antialiased",
+          location.pathname === '/login' ? "bg-transparent dark:bg-background" : "bg-background"
+        )}
+      >
+        <NavBar />
+        <main className="flex-1">
+          <Routes>
+            <Route element={<PublicOnlyRoute />}>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+            </Route>
 
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/collection" element={<CollectionInfo />} />
-            <Route path="/quiz" element={<QuizView />} />
-            <Route path="/quizresult" element={<QuizResult />} />
-            <Route path="/accountinformation" element={<UserDetails />} />
-          </Route>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/collection" element={<CollectionInfo />} />
+              <Route path="/quiz" element={<QuizView />} />
+              <Route path="/quizresult" element={<QuizResult />} />
+              <Route path="/accountinformation" element={<UserDetails />} />
+            </Route>
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
-    </div>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+      </div>
+    </ThemeProvider>
   )
 }
 

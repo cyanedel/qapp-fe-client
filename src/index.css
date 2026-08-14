@@ -131,6 +131,10 @@ body {
   margin: 0;
 }
 
+html:not(.dark) body.login-light-surface {
+  background: linear-gradient(to bottom, #FFFAE5, #F5E6B8);
+}
+
 h1,
 h2 {
   font-family: var(--heading);

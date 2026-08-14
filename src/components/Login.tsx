@@ -7,11 +7,13 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { loginUser } from '@/api/auth'
+import { useTheme } from '@/components/ThemeProvider'
 import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Shield, UserCheck, Crown } from 'lucide-react'
 
 export const Login: React.FC = () => {
   const navigate = useNavigate()
   const { setUser } = useAuthStore()
+  const { theme } = useTheme()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -50,14 +52,14 @@ export const Login: React.FC = () => {
   }
 
   return (
-    <div className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
+    <div className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center bg-transparent p-4 dark:bg-background">
       {/* Dynamic Background Glow Effects */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-400/20 rounded-full blur-3xl pointer-events-none dark:bg-primary/10" />
       
-      <Card className="w-full max-w-md shadow-2xl border-border/50 bg-card/95 backdrop-blur-md">
+      <Card className="w-full max-w-md border-amber-900/15 bg-[#FFF4CC]/90 shadow-2xl shadow-amber-950/15 backdrop-blur-md ring-amber-900/5 dark:border-border/50 dark:bg-card/95 dark:shadow-black/40 dark:ring-foreground/10">
         <CardHeader className="space-y-2 text-center pb-6">
           <div className="mx-auto flex w-32 items-center justify-center">
-            <img src="/potero_text.svg" alt="Potero" />
+            <img src={theme === 'light' ? '/potero_alt_text.svg' : '/potero_text.svg'} alt="Potero" />
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight">Welcome back</CardTitle>
           <CardDescription className="text-muted-foreground">
@@ -82,7 +84,7 @@ export const Login: React.FC = () => {
                   id="email"
                   type="email"
                   placeholder="name@example.com"
-                  className="pl-9"
+                  className="border-amber-900/10 bg-[#FFFAE5]/75 pl-9 focus-visible:border-amber-700/30 dark:border-transparent dark:bg-input/50 dark:focus-visible:border-ring"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading}
@@ -101,7 +103,7 @@ export const Login: React.FC = () => {
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
-                  className="pl-9 pr-10"
+                  className="border-amber-900/10 bg-[#FFFAE5]/75 pl-9 pr-10 focus-visible:border-amber-700/30 dark:border-transparent dark:bg-input/50 dark:focus-visible:border-ring"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={loading}
@@ -131,7 +133,7 @@ export const Login: React.FC = () => {
             </Button>
 
             {/* Quick Demo Credentials Panel */}
-            <div className="pt-4 border-t border-border/40 space-y-2">
+            <div className="space-y-2 border-t border-amber-900/10 pt-4 dark:border-border/40">
               <p className="text-xs font-medium text-muted-foreground text-center">
                 Quick Demo Accounts (Click to test):
               </p>
