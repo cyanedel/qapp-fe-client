@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { AlertCircle, CalendarDays, Edit3, Mail, User as UserIcon } from 'lucide-react'
+import { AlertCircle, Briefcase, CalendarDays, Edit3, Home, IdCard, Mail, MapPin, Phone, User as UserIcon } from 'lucide-react'
 import { getCurrentUser } from '@/api/auth'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -63,8 +63,21 @@ export const UserDetails: React.FC = () => {
     }).format(new Date(profile.created_at))
   }, [profile?.created_at])
 
+  const dateOfBirth = useMemo(() => {
+    if (!profile?.date_of_birth) {
+      return null
+    }
+
+    return new Intl.DateTimeFormat('en', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(new Date(profile.date_of_birth))
+  }, [profile?.date_of_birth])
+
   const displayName = profile?.display_name || profile?.username || 'User'
   const avatarInitial = displayName.charAt(0).toUpperCase()
+  const phoneNumber = [profile?.phone_country_code, profile?.phone_number].filter(Boolean).join(' ')
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
@@ -118,11 +131,36 @@ export const UserDetails: React.FC = () => {
               Loading account information...
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
-              <ProfileField icon={<UserIcon className="h-4 w-4" />} label="Display name" value={profile?.display_name} />
-              <ProfileField icon={<UserIcon className="h-4 w-4" />} label="Username" value={profile?.username} />
-              <ProfileField icon={<Mail className="h-4 w-4" />} label="Email address" value={profile?.email} />
-              <ProfileField icon={<CalendarDays className="h-4 w-4" />} label="Joined" value={joinedDate} />
+            <div className="space-y-6">
+              <ProfileSection title="Basic Information">
+                <ProfileField icon={<IdCard className="h-4 w-4" />} label="Real name" value={profile?.real_name} />
+                <ProfileField icon={<UserIcon className="h-4 w-4" />} label="Display name" value={profile?.display_name} />
+                <ProfileField icon={<UserIcon className="h-4 w-4" />} label="Username" value={profile?.username} />
+                <ProfileField icon={<MapPin className="h-4 w-4" />} label="Place of birth" value={profile?.place_of_birth} />
+                <ProfileField icon={<CalendarDays className="h-4 w-4" />} label="Date of birth" value={dateOfBirth} />
+                <ProfileField icon={<UserIcon className="h-4 w-4" />} label="Gender" value={profile?.gender} />
+              </ProfileSection>
+
+              <ProfileSection title="Contact">
+                <ProfileField icon={<Phone className="h-4 w-4" />} label="Phone" value={phoneNumber} />
+                <ProfileField icon={<Mail className="h-4 w-4" />} label="Email address" value={profile?.email} />
+                <ProfileField icon={<Home className="h-4 w-4" />} label="Domicile address" value={profile?.domicile_address} />
+                <label className="flex items-center gap-3 rounded-xl border bg-background p-4 text-sm font-medium text-foreground">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 accent-primary"
+                    checked={Boolean(profile?.domicile_same_as_ktp)}
+                    readOnly
+                  />
+                  Domicile address is the same as KTP address
+                </label>
+                <ProfileField icon={<MapPin className="h-4 w-4" />} label="KTP address" value={profile?.ktp_address} />
+              </ProfileSection>
+
+              <ProfileSection title="Others">
+                <ProfileField icon={<Briefcase className="h-4 w-4" />} label="Profession" value={profile?.profession} />
+                <ProfileField icon={<CalendarDays className="h-4 w-4" />} label="Joined" value={joinedDate} />
+              </ProfileSection>
             </div>
           )}
         </CardContent>
@@ -136,6 +174,18 @@ interface ProfileFieldProps {
   label: string
   value?: string | null
 }
+
+interface ProfileSectionProps {
+  title: string
+  children: React.ReactNode
+}
+
+const ProfileSection: React.FC<ProfileSectionProps> = ({ title, children }) => (
+  <section className="space-y-3">
+    <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{title}</h2>
+    <div className="grid gap-4 sm:grid-cols-2">{children}</div>
+  </section>
+)
 
 const ProfileField: React.FC<ProfileFieldProps> = ({ icon, label, value }) => (
   <div className="rounded-xl border bg-background p-4">
