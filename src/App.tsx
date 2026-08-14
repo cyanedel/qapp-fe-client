@@ -7,6 +7,7 @@ import { NotFound } from "@/components/NotFound"
 import { QuizResult } from "@/components/QuizResult"
 import { QuizView } from "@/components/QuizView"
 import { Register } from "@/components/Register"
+import { UserDetails } from "@/components/UserDetails"
 import { useAuthStore } from "@/store/useAuthStore"
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Route path="/collection" element={<CollectionInfo />} />
             <Route path="/quiz" element={<QuizView />} />
             <Route path="/quizresult" element={<QuizResult />} />
+            <Route path="/accountinformation" element={<UserDetails />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

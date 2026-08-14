@@ -13,6 +13,10 @@ export const NavBar: React.FC = () => {
     navigate('/login')
   }
 
+  const handleAccountInformation = () => {
+    navigate('/accountinformation')
+  }
+
   const renderRoleBadge = (role?: string) => {
     switch (role) {
       case 'admin':
@@ -57,7 +61,11 @@ export const NavBar: React.FC = () => {
         <div className="flex items-center space-x-3">
           {isAuthenticated && user ? (
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 text-sm font-medium">
+              <button
+                type="button"
+                onClick={handleAccountInformation}
+                className="flex items-center gap-2 rounded-full px-2 py-1 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+              >
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
                   <UserIcon className="h-4 w-4 text-muted-foreground" />
                 </div>
@@ -67,7 +75,7 @@ export const NavBar: React.FC = () => {
                   </span>
                   {renderRoleBadge(user.role)}
                 </div>
-              </div>
+              </button>
               <Button variant="outline" size="sm" onClick={handleLogout} className="gap-1">
                 <LogOut className="h-4 w-4" /> Logout
               </Button>
