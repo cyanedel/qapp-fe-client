@@ -135,14 +135,15 @@ export const Login: React.FC = () => {
             {/* Quick Demo Credentials Panel */}
             <div className="space-y-2 border-t border-amber-900/10 pt-4 dark:border-border/40">
               <p className="text-xs font-medium text-muted-foreground text-center">
-                Quick Demo Accounts (Click to test):
+                Quick Demo Account (Click to test):
               </p>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid py-2">
+              {/* <div className="grid grid-cols-3 gap-2"> */}
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="text-xs flex items-center justify-center gap-1"
+                  className="text-xs flex items-center justify-center gap-1 hidden"
                   onClick={() => handleQuickFill('admin@qapp.com', 'AdminPass123!')}
                 >
                   <Shield className="h-3 w-3 text-amber-500" /> Admin
@@ -151,7 +152,7 @@ export const Login: React.FC = () => {
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="text-xs flex items-center justify-center gap-1"
+                  className="text-xs flex items-center justify-center gap-1 hidden"
                   onClick={() => handleQuickFill('creator@qapp.com', 'CreatorPass123!')}
                 >
                   <Crown className="h-3 w-3 text-purple-500" /> Creator
