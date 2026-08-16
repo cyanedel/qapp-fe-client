@@ -1,13 +1,5 @@
-import type { Question } from '@/types';
+import type { CollectionState, Question } from '@/types/collection';
 import { create } from 'zustand';
-
-interface CollectionState {
-  collectionID: string
-  questionList: Array<Question>
-  setCollectionID: (collectionID: string) => void,
-  setQuestionList: (questionList: Array<Question>) => void,
-  reset: () => void;
-}
 
 export const useCollectionStore = create<CollectionState>((set) => ({
   collectionID: "",
@@ -19,7 +11,7 @@ export const useCollectionStore = create<CollectionState>((set) => ({
     }))
   },
 
-  setQuestionList(questionList: Array<Question>) {
+  setQuestionList(questionList: Question[]) {
     set(()=>({
       questionList: questionList
     }))

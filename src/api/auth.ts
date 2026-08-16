@@ -1,7 +1,7 @@
 import { env } from '@/config/env';
-import type { User } from '@/types';
+import type { User } from '@/types/auth';
 
-export const AUTH_SESSION_EXPIRED_EVENT = 'qapp-auth-session-expired'
+export const AUTH_SESSION_EXPIRED_EVENT = 'potero-auth-session-expired'
 
 export class AuthError extends Error {
   constructor(message = 'Your session has expired. Please sign in again.') {

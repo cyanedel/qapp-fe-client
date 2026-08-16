@@ -3,7 +3,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom'
-import type { QuestionCollection } from '@/types';
+import type { CollectionListItemDto, QuestionCollection } from '@/types/collection';
 import { useCollectionStore } from '@/store/useCollectionStore';
 import { useQuestionStore } from '@/store/useQuestionStore';
 import { getCollectionList } from '@/api/collection';
@@ -17,19 +17,17 @@ export const Home: React.FC = () => {
   const resetAnswers = useQuestionStore((state)=>state.reset)
   const navigate = useNavigate();
   
-  type RawCollectionItem = {
-    collectionid: string;
-    description: string;
-    title: string;
-    tags: string[];
-  };
-
   useEffect(()=>{
     resetCollection();
     resetAnswers();
 
     getCollectionList().then(data => {
-      const mappedData: QuestionCollection[] = data.map((item: RawCollectionItem)=>{
+      if (!data) {
+        setCollectionList([])
+        return
+      }
+
+      const mappedData: QuestionCollection[] = data.map((item: CollectionListItemDto)=>{
         const { collectionid, title, description, tags } = item
         return {
           collectionID: collectionid,

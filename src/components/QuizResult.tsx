@@ -7,7 +7,7 @@ import { useCollectionStore } from '@/store/useCollectionStore'
 import { getScoreHistory } from '@/api/history'
 import { CheckCircle2, Clock, ArrowLeft } from 'lucide-react'
 import { env } from '@/config/env';
-import type { ScoreHistory } from '@/types'
+import type { ScoreHistory } from '@/types/history'
 
 const REDIRECT_SECONDS = env.TIMEOUT_UI / 1000
 

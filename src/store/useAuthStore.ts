@@ -1,13 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { User } from '@/types'
-
-interface AuthState {
-  user: User | null
-  isAuthenticated: boolean
-  setUser: (user: User | null) => void
-  logout: () => void
-}
+import type { AuthState } from '@/types/auth'
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -18,7 +11,7 @@ export const useAuthStore = create<AuthState>()(
       logout: () => set({ user: null, isAuthenticated: false }),
     }),
     {
-      name: 'qapp-auth-storage',
+      name: 'potero-auth-storage',
     }
   )
 )

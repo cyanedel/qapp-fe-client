@@ -1,15 +1,9 @@
-import type { ScoreHistory } from '@/types';
+import type { ScoreHistory, ScoreHistoryStore } from '@/types/history';
 import { create } from 'zustand';
-
-interface ScoreHistoryStore {
-  scoreHistory: Array<ScoreHistory>,
-  setScoreHistory: (setScoreHistory: Array<ScoreHistory>) => void,
-  reset: () => void;
-}
 
 export const useScoreHistoryStore = create<ScoreHistoryStore>((set) => ({
   scoreHistory:[],
-  setScoreHistory: (scoreHistory: Array<ScoreHistory>) => {
+  setScoreHistory: (scoreHistory: ScoreHistory[]) => {
     set(()=> ({
       scoreHistory: scoreHistory
     }))

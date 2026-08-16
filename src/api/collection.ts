@@ -1,7 +1,9 @@
 import { env } from '@/config/env';
 import { handleAuthResponse } from '@/api/auth';
+import type { CollectionDetailDto, CollectionListItemDto } from '@/types/collection';
+import type { EndQuizRequest, StartQuizResponse, SubmitQuizAnswerRequest } from '@/types/quiz';
 
-export const getCollectionList = () => {
+export const getCollectionList = (): Promise<CollectionListItemDto[] | null> => {
   return fetch(env.API_URL + '/collection/list')
     .then(response => {
       if (!response.ok) {
@@ -17,7 +19,7 @@ export const getCollectionList = () => {
     })
 }
 
-export const getCollectionByCollectionID = (collection_id: string) => {
+export const getCollectionByCollectionID = (collection_id: string): Promise<CollectionDetailDto | null> => {
   return fetch(`${env.API_URL}/collection/${collection_id}`)
     .then((res) => {
       if (!res.ok) throw new Error('Failed to fetch collection details')
@@ -46,7 +48,7 @@ export const startQuiz = (collection_id: string, user_id: string) => {
       handleAuthResponse(res)
       return res.json()
     }
-  ).then((data)=>{
+  ).then((data: StartQuizResponse)=>{
     return data.attempt_id
   }).catch((err) => {
     console.error('Fetch error:', err);
@@ -54,14 +56,7 @@ export const startQuiz = (collection_id: string, user_id: string) => {
   })
 }
 
-type QuizAnswerPayload = {
-  attempt_id: string
-  user_id: string
-  question_index: number
-  selected_option: number
-}
-
-export const submitQuizAnswer = async (payload: QuizAnswerPayload) => {
+export const submitQuizAnswer = async (payload: SubmitQuizAnswerRequest) => {
   const response = await fetch(`${env.API_URL}/quiz/answer`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -79,18 +74,7 @@ export const submitQuizAnswer = async (payload: QuizAnswerPayload) => {
   return data
 }
 
-type EndQuizAnswer = {
-  question_index: number
-  selected_option: number
-}
-
-type EndQuizPayload = {
-  attempt_id: string
-  user_id: string
-  answers: EndQuizAnswer[]
-}
-
-export const endQuiz = async (payload: EndQuizPayload) => {
+export const endQuiz = async (payload: EndQuizRequest) => {
   const response = await fetch(`${env.API_URL}/quiz/end`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

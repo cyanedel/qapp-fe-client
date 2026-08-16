@@ -6,7 +6,8 @@ import { Spinner } from '@/components/ui/spinner'
 import { useCollectionStore } from '@/store/useCollectionStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useScoreHistoryStore } from '@/store/useScoreHistoryStore'
-import type { Question, ScoreHistory } from '@/types'
+import type { Question, QuestionDto } from '@/types/collection'
+import type { ScoreHistory } from '@/types/history'
 import { ShieldAlert, CheckCircle2, Trophy, Clock, Target, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { getCollectionByCollectionID, startQuiz } from '@/api/collection';
 import { getUserAccessStatus } from '@/api/user';
@@ -90,16 +91,21 @@ export const CollectionInfo: React.FC = () => {
     setCollectionID(collectionIDFromUrl)
 
     getCollectionByCollectionID(collectionIDFromUrl).then((data)=>{
+      if (!data) {
+        setError('Failed to load collection information.')
+        return
+      }
+
       setTitle(data.Title || data.title || 'Question Set')
       setDescription(data.Description || data.description || '')
       setTags(data.Tags || data.tags || [])
 
       const rawQuestions = data.Question || data.question || []
-      const mappedData: Question[] = rawQuestions.map((item: any) => ({
-        id: item.ID || item.id,
-        questionText: item.QuestionText || item.questionText,
-        options: item.Options || item.options,
-        correctAnswer: item.CorrectAnswer || item.correctAnswer,
+      const mappedData: Question[] = rawQuestions.map((item: QuestionDto) => ({
+        id: item.ID ?? item.id ?? 0,
+        questionText: item.QuestionText ?? item.questionText ?? '',
+        options: item.Options ?? item.options ?? [],
+        correctAnswer: item.CorrectAnswer ?? item.correctAnswer ?? 0,
       }))
       setQuestionList(mappedData)
     })
@@ -140,7 +146,9 @@ export const CollectionInfo: React.FC = () => {
       try {
         startQuiz(collectionIDFromUrl, user.user_id)
         .then((attempt_id)=>{
-          sessionStorage.setItem('current_attempt_id', attempt_id)
+          if (attempt_id) {
+            sessionStorage.setItem('current_attempt_id', attempt_id)
+          }
         })
       } catch (err) {
         console.error('Failed to log quiz attempt start:', err)

@@ -1,13 +1,5 @@
+import type { QuestionState } from '@/types/quiz';
 import { create } from 'zustand';
-
-interface QuestionState {
-  collectionID: string
-  score: number;
-  answers: Record<number, number>;
-  setCollectionID: (setID: string) => void,
-  selectAnswer: (questionId: number, answerIndex: number) => void;
-  reset: () => void;
-}
 
 export const useQuestionStore = create<QuestionState>((set) => ({
   collectionID: "",
