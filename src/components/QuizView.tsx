@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { useQuestionStore } from '@/store/useQuestionStore';
 import { useCollectionStore } from '@/store/useCollectionStore';
 import { useAuthStore } from '@/store/useAuthStore';
-import { handleAuthResponse } from '@/api/auth';
+import { endQuiz, submitQuizAnswer } from '@/api/collection';
 
 export const QuizView: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -25,17 +25,32 @@ export const QuizView: React.FC = () => {
     selectedAnswer(currentIndex, answerIndex);
   }
 
-  const handleNav = (direction: string) => {
+  const handleNav = async (direction: string) => {
     if (direction === "next") {
+      const attemptID = sessionStorage.getItem('current_attempt_id')
+      const selected = answers[currentIndex]
+
+      if (attemptID && user?.user_id && selected) {
+        try {
+          await submitQuizAnswer({
+            attempt_id: attemptID,
+            user_id: user.user_id,
+            question_index: currentIndex,
+            selected_option: selected,
+          })
+        } catch (err) {
+          console.error('Failed to submit quiz answer to backend:', err)
+        }
+      }
+
       setCurrentIndex(currentIndex+1)
     } else if (direction === "prev") {
       setCurrentIndex(currentIndex-1 < 0 ? 0 : currentIndex-1)
     }
   };
 
-  const handleFinishQuiz = async () => {
+  const handleEndQuiz = async () => {
     const attemptID = sessionStorage.getItem('current_attempt_id')
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
     if (attemptID && user?.user_id) {
       setSubmitting(true)
@@ -45,17 +60,11 @@ export const QuizView: React.FC = () => {
           selected_option: selected,
         }))
 
-        const response = await fetch(`${API_URL}/quiz/submit`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            attempt_id: attemptID,
-            user_id: user.user_id,
-            answers: formattedAnswers,
-          }),
+        await endQuiz({
+          attempt_id: attemptID,
+          user_id: user.user_id,
+          answers: formattedAnswers,
         })
-        handleAuthResponse(response)
         sessionStorage.removeItem('current_attempt_id')
       } catch (err) {
         console.error('Failed to submit quiz attempt to backend:', err)
@@ -88,7 +97,7 @@ export const QuizView: React.FC = () => {
       <div className='flex flex-wrap items-center gap-2 justify-center md:justify-end'>
         <Button onClick={()=>handleNav("prev")} variant={'outline'} aria-label='back' disabled={currentIndex === 0}>Previous</Button>
         { currentIndex + 1 === questionList?.length
-          ? <Button onClick={handleFinishQuiz} disabled={submitting}>
+          ? <Button onClick={handleEndQuiz} disabled={submitting}>
               {submitting ? 'Submitting...' : 'Finish & View Result'}
             </Button>
           : <Button onClick={()=>handleNav("next")}>Next</Button> }

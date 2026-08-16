@@ -8,7 +8,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { useScoreHistoryStore } from '@/store/useScoreHistoryStore'
 import type { Question, ScoreHistory } from '@/types'
 import { ShieldAlert, CheckCircle2, Trophy, Clock, Target, TrendingUp, TrendingDown, Minus } from 'lucide-react'
-import { getCollectionByCollectionID, startQuestion } from '@/api/collection';
+import { getCollectionByCollectionID, startQuiz } from '@/api/collection';
 import { getUserAccessStatus } from '@/api/user';
 import { getScoreHistory } from '@/api/history';
 
@@ -138,7 +138,7 @@ export const CollectionInfo: React.FC = () => {
 
     if (user?.user_id) {
       try {
-        startQuestion(collectionIDFromUrl, user.user_id)
+        startQuiz(collectionIDFromUrl, user.user_id)
         .then((attempt_id)=>{
           sessionStorage.setItem('current_attempt_id', attempt_id)
         })

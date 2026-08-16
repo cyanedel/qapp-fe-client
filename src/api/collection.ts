@@ -32,7 +32,7 @@ export const getCollectionByCollectionID = (collection_id: string) => {
     })
 }
 
-export const startQuestion = (collection_id: string, user_id: string) => {
+export const startQuiz = (collection_id: string, user_id: string) => {
   return fetch(`${env.API_URL}/quiz/start`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -52,4 +52,58 @@ export const startQuestion = (collection_id: string, user_id: string) => {
     console.error('Fetch error:', err);
     return null;
   })
+}
+
+type QuizAnswerPayload = {
+  attempt_id: string
+  user_id: string
+  question_index: number
+  selected_option: number
+}
+
+export const submitQuizAnswer = async (payload: QuizAnswerPayload) => {
+  const response = await fetch(`${env.API_URL}/quiz/answer`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(payload),
+  })
+
+  handleAuthResponse(response)
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to submit quiz answer')
+  }
+
+  return data
+}
+
+type EndQuizAnswer = {
+  question_index: number
+  selected_option: number
+}
+
+type EndQuizPayload = {
+  attempt_id: string
+  user_id: string
+  answers: EndQuizAnswer[]
+}
+
+export const endQuiz = async (payload: EndQuizPayload) => {
+  const response = await fetch(`${env.API_URL}/quiz/end`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(payload),
+  })
+
+  handleAuthResponse(response)
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to end quiz')
+  }
+
+  return data
 }
