@@ -1,5 +1,6 @@
 import { env } from '@/config/env';
 import type { User } from '@/types/auth';
+import { collectAccessLogInfo } from '@/lib/accessLogInfo';
 
 export const AUTH_SESSION_EXPIRED_EVENT = 'potero-auth-session-expired'
 
@@ -21,7 +22,7 @@ export const loginUser = async (email: string, password: string) => {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, info: collectAccessLogInfo() }),
   })
 
   const data = await response.json()
@@ -92,7 +93,11 @@ export const handleAuthResponse = (response: Response) => {
 export const logoutUser = async () => {
   const response = await fetch(`${env.API_URL}/auth/logout`, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
     credentials: 'include',
+    body: JSON.stringify({ info: collectAccessLogInfo() }),
   })
 
   const data = await response.json()
