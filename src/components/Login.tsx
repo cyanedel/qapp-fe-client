@@ -8,7 +8,13 @@ import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { loginUser } from '@/api/auth'
 import { useTheme } from '@/components/ThemeProvider'
-import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Shield, UserCheck, Crown } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, UserCheck } from 'lucide-react'
+
+const demoAccounts = [
+  { label: 'Student 1', email: 'user1@qapp.com', password: 'UserPass123!' },
+  { label: 'Student 2', email: 'user2@qapp.com', password: 'UserPass123!' },
+  { label: 'Student 3', email: 'user3@qapp.com', password: 'UserPass123!' },
+]
 
 export const Login: React.FC = () => {
   const navigate = useNavigate()
@@ -45,9 +51,9 @@ export const Login: React.FC = () => {
   }
 
   // Quick helper for demo logins
-  const handleQuickFill = (demoEmail: string, demoPass: string) => {
-    setEmail(demoEmail)
-    setPassword(demoPass)
+  const handleQuickFill = (account: (typeof demoAccounts)[number]) => {
+    setEmail(account.email)
+    setPassword(account.password)
     setError(null)
   }
 
@@ -137,35 +143,19 @@ export const Login: React.FC = () => {
               <p className="text-xs font-medium text-muted-foreground text-center">
                 Quick Demo Account (Click to test):
               </p>
-              <div className="grid py-2">
-              {/* <div className="grid grid-cols-3 gap-2"> */}
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="text-xs flex items-center justify-center gap-1 hidden"
-                  onClick={() => handleQuickFill('admin@qapp.com', 'AdminPass123!')}
-                >
-                  <Shield className="h-3 w-3 text-amber-500" /> Admin
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="text-xs flex items-center justify-center gap-1 hidden"
-                  onClick={() => handleQuickFill('creator@qapp.com', 'CreatorPass123!')}
-                >
-                  <Crown className="h-3 w-3 text-purple-500" /> Creator
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="text-xs flex items-center justify-center gap-1"
-                  onClick={() => handleQuickFill('user@qapp.com', 'UserPass123!')}
-                >
-                  <UserCheck className="h-3 w-3 text-blue-500" /> Student
-                </Button>
+              <div className="grid grid-cols-3 gap-2 py-2">
+                {demoAccounts.map((account) => (
+                  <Button
+                    key={account.email}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center justify-center gap-1 px-2 text-xs"
+                    onClick={() => handleQuickFill(account)}
+                  >
+                    <UserCheck className="h-3 w-3 text-blue-500" /> {account.label}
+                  </Button>
+                ))}
               </div>
             </div>
           </CardContent>
