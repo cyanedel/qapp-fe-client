@@ -11,9 +11,9 @@ import { useTheme } from '@/components/ThemeProvider'
 import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, UserCheck } from 'lucide-react'
 
 const demoAccounts = [
-  { label: 'Student 1', email: 'user1@qapp.com', password: 'UserPass123!' },
-  { label: 'Student 2', email: 'user2@qapp.com', password: 'UserPass123!' },
-  { label: 'Student 3', email: 'user3@qapp.com', password: 'UserPass123!' },
+  { label: 'Student 1', email: 'student-alice@potero.com', password: 'SeedPass123!' },
+  { label: 'Student 2', email: 'student-bob@potero.com', password: 'SeedPass123!' },
+  { label: 'Student 3', email: 'student-charlie@potero.com', password: 'SeedPass123!' },
 ]
 
 export const Login: React.FC = () => {
