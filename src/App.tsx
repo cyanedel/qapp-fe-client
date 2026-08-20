@@ -60,9 +60,9 @@ function App() {
   }, [logout, navigate])
 
   useEffect(() => {
-    const isLoginRoute = location.pathname === '/login'
+    const isAuthRoute = location.pathname === '/login' || location.pathname === '/register'
 
-    document.body.classList.toggle('login-light-surface', isLoginRoute)
+    document.body.classList.toggle('login-light-surface', isAuthRoute)
 
     return () => document.body.classList.remove('login-light-surface')
   }, [location.pathname])
@@ -88,10 +88,10 @@ function App() {
       <div
         className={cn(
           "flex min-h-screen flex-col text-foreground antialiased",
-          location.pathname === '/login' ? "bg-transparent dark:bg-background" : "bg-background"
+          isAuthRoute(location.pathname) ? "bg-[#FFF8E7] dark:bg-[#FFF8E7]" : "bg-background"
         )}
       >
-        <NavBar />
+        {location.pathname !== '/login' && location.pathname !== '/register' && <NavBar />}
         <main className="flex-1">
           <Routes>
             <Route element={<PublicOnlyRoute />}>
@@ -115,6 +115,8 @@ function App() {
     </ThemeProvider>
   )
 }
+
+const isAuthRoute = (pathname: string) => pathname === '/login' || pathname === '/register'
 
 const AuthLoading = () => (
   <div className="flex min-h-64 items-center justify-center text-muted-foreground">
