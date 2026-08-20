@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { logoutUser } from '@/api/auth'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -9,7 +9,7 @@ import { LogIn, LogOut, User as UserIcon, Settings } from 'lucide-react'
 export const NavBar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuthStore()
   const { theme } = useTheme()
-  const location = useLocation()
+  // const location = useLocation()
   const navigate = useNavigate()
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
