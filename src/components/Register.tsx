@@ -8,11 +8,9 @@ import { Spinner } from '@/components/ui/spinner'
 import { registerUser } from '@/api/auth'
 import { Mail, Lock, Eye, EyeOff, UserPlus, AlertCircle, CheckCircle2, Sparkles } from 'lucide-react'
 import { env } from '@/config/env';
-import { useTheme } from '@/components/ThemeProvider'
 
 export const Register: React.FC = () => {
   const navigate = useNavigate()
-  const { theme } = useTheme()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -62,12 +60,11 @@ export const Register: React.FC = () => {
 
       <div className="relative grid w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white/70 shadow-2xl shadow-[#5B4BDB]/15 ring-1 ring-[#5B4BDB]/10 backdrop-blur-sm lg:h-[620px] lg:grid-cols-[1.05fr_0.95fr]">
         <div className="relative hidden min-h-[620px] overflow-hidden bg-[#5B4BDB] p-12 text-left text-white lg:flex lg:flex-col lg:justify-between">
-          <div className="absolute -right-24 -top-20 h-72 w-72 rounded-full bg-[#8C7CFF]" />
-          <div className="absolute -bottom-32 -left-20 h-80 w-80 rounded-full border-[48px] border-[#FF8A5B]/70" />
           <div className="relative">
-            <img src={theme === 'light' ? '/potero_alt_text.svg' : '/potero_text.svg'} alt="Potero" className="h-12 w-auto brightness-0 invert" />
+            <span className="block text-5xl font-semibold tracking-[-0.06em] text-white">Potero</span>
             <p className="mt-16 max-w-sm text-4xl font-semibold leading-tight tracking-tight">Make learning feel like progress.</p>
             <p className="mt-5 max-w-sm text-base leading-7 text-white/75">Create your account and turn every quiz into a small win.</p>
+            <div className="mt-8 h-1.5 w-14 rounded-full bg-[#FF8A5B]" />
           </div>
           <div className="relative flex items-center gap-3 text-sm text-white/80">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/15"><Sparkles className="h-5 w-5" /></span>
@@ -98,7 +95,7 @@ export const Register: React.FC = () => {
           <>
             <CardHeader className="space-y-2 text-center pb-6">
               <div className="mx-auto flex w-32 items-center justify-center lg:hidden">
-                <img src={theme === 'light' ? '/potero_alt_text.svg' : '/potero_text.svg'} alt="Potero" />
+                <span className="text-4xl font-semibold tracking-[-0.06em] text-[#5146C7]">Potero</span>
               </div>
               <div className="mx-auto mt-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FF8A5B]/15 text-[#E46C43] ring-1 ring-[#FF8A5B]/25">
                 <UserPlus className="h-6 w-6" />

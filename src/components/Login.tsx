@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { loginUser } from '@/api/auth'
-import { useTheme } from '@/components/ThemeProvider'
 import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Sparkles, UserCheck } from 'lucide-react'
 
 const demoAccounts = [
@@ -19,7 +18,6 @@ const demoAccounts = [
 export const Login: React.FC = () => {
   const navigate = useNavigate()
   const { setUser } = useAuthStore()
-  const { theme } = useTheme()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -63,12 +61,11 @@ export const Login: React.FC = () => {
 
       <div className="relative grid w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white/70 shadow-2xl shadow-[#5B4BDB]/15 ring-1 ring-[#5B4BDB]/10 backdrop-blur-sm lg:h-[620px] lg:grid-cols-[1.05fr_0.95fr]">
         <div className="relative hidden min-h-[620px] overflow-hidden bg-[#5B4BDB] p-12 text-left text-white lg:flex lg:flex-col lg:justify-between">
-          <div className="absolute -right-24 -top-20 h-72 w-72 rounded-full bg-[#8C7CFF]" />
-          <div className="absolute -bottom-32 -left-20 h-80 w-80 rounded-full border-[48px] border-[#FF8A5B]/70" />
           <div className="relative">
-            <img src={theme === 'light' ? '/potero_alt_text.svg' : '/potero_text.svg'} alt="Potero" className="h-12 w-auto brightness-0 invert" />
+            <span className="block text-5xl font-semibold tracking-[-0.06em] text-white">Potero</span>
             <p className="mt-16 max-w-sm text-4xl font-semibold leading-tight tracking-tight">A smarter way to learn, one question at a time.</p>
             <p className="mt-5 max-w-sm text-base leading-7 text-white/75">Pick up where you left off, discover new topics, and make every quiz count.</p>
+            <div className="mt-8 h-1.5 w-14 rounded-full bg-[#FF8A5B]" />
           </div>
           <div className="relative flex items-center gap-3 text-sm text-white/80">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/15"><Sparkles className="h-5 w-5" /></span>
@@ -79,7 +76,7 @@ export const Login: React.FC = () => {
         <Card className="h-full w-full rounded-none border-0 bg-transparent py-10 shadow-none sm:px-8 lg:px-12 lg:py-16">
         <CardHeader className="space-y-2 text-center pb-6">
           <div className="mx-auto flex w-32 items-center justify-center lg:hidden">
-            <img src={theme === 'light' ? '/potero_alt_text.svg' : '/potero_text.svg'} alt="Potero" />
+            <span className="text-4xl font-semibold tracking-[-0.06em] text-[#5146C7]">Potero</span>
           </div>
           <CardTitle className="text-3xl font-bold tracking-tight text-[#252238]">Welcome back</CardTitle>
           <CardDescription className="text-[#6D6880]">Continue your quiz journey with Potero.</CardDescription>

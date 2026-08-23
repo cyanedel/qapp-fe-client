@@ -3,12 +3,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { logoutUser } from '@/api/auth'
 import { useAuthStore } from '@/store/useAuthStore'
-import { useTheme } from '@/components/ThemeProvider'
 import { LogIn, LogOut, User as UserIcon, Settings } from 'lucide-react'
 
 export const NavBar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuthStore()
-  const { theme } = useTheme()
   // const location = useLocation()
   const navigate = useNavigate()
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
@@ -48,9 +46,8 @@ export const NavBar: React.FC = () => {
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center space-x-6">
-          <Link to="/" className="font-bold text-lg tracking-tight flex items-center gap-2">
-            {/* <img src={theme === 'light' ? '/potero_alt_p_icon.svg' : '/potero_p_icon.svg'} alt="Potero" className="h-7 w-7" /> */}
-            <img src={theme === 'light' ? '/potero_text.svg' : '/potero_alt_text.svg'} alt="Potero" className="h-7" />
+          <Link to="/" className="font-sans text-xl font-semibold tracking-[-0.05em] text-primary">
+            Potero
           </Link>
         </div>
 
