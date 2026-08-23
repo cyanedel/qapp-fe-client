@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { useCollectionStore } from '@/store/useCollectionStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useScoreHistoryStore } from '@/store/useScoreHistoryStore'
-import type { Question, QuestionDto } from '@/types/collection'
+import type { CollectionAccessType, Question, QuestionDto, QuestionCollection } from '@/types/collection'
 import type { ScoreHistory } from '@/types/history'
 import { ShieldAlert, CheckCircle2, Trophy, Clock, Target, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { getCollectionByCollectionID, startQuiz } from '@/api/collection';
@@ -54,25 +54,41 @@ const getTrendIcon = (current: ScoreHistory, previous: ScoreHistory | undefined)
   return <Minus className="h-3.5 w-3.5 text-muted-foreground" />
 }
 
+const getAccessDeniedMessage = (accessType: CollectionAccessType, accessTag: string | null) => {
+  if (accessType === 'premium') return 'This collection requires a premium purchase.'
+  if (accessType === 'public_org') return 'You must be an active member of the organization to access this collection.'
+  if (accessType === 'grant_org') {
+    return accessTag
+      ? `Your organization has not granted access through the ${accessTag} access tag.`
+      : 'Your organization has not granted access to this collection.'
+  }
+  return 'You do not currently have access to this collection.'
+}
+
 export const CollectionInfo: React.FC = () => {
   const [searchParams] = useSearchParams()
+  const location = useLocation()
   const collectionIDFromUrl = searchParams.get('collectionid') || ''
+  const collectionSummary = location.state?.collection as QuestionCollection | undefined
 
   const { user } = useAuthStore()
 
   const [title, setTitle] = useState<string>('')
   const [description, setDescription] = useState<string>('')
-  const [tags, setTags] = useState<string[]>([])
+  const [searchTags, setSearchTags] = useState<string[]>(collectionSummary?.search_tags ?? [])
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
-  const [canAccess, setCanAccess] = useState<boolean>(true)
+  const [canAccess, setCanAccess] = useState<boolean>(collectionSummary?.can_access ?? true)
+  const [accessType, setAccessType] = useState<CollectionAccessType>(collectionSummary?.access_type ?? 'public')
+  const [accessTag, setAccessTag] = useState<string | null>(collectionSummary?.access_tag ?? null)
   const [attemptsUsed, setAttemptsUsed] = useState<number>(0)
   const [maxAttempts, setMaxAttempts] = useState<number | null>(null)
   const [accessMessage, setAccessMessage] = useState<string>('')
 
   const [scoreHistory, setScoreHistory] = useState<ScoreHistory[]>([])
   const [historyLoading, setHistoryLoading] = useState<boolean>(false)
+  const [isStarting, setIsStarting] = useState<boolean>(false)
 
   const setCollectionID = useCollectionStore((state) => state.setCollectionID)
   const setQuestionList = useCollectionStore((state) => state.setQuestionList)
@@ -90,15 +106,24 @@ export const CollectionInfo: React.FC = () => {
 
     setCollectionID(collectionIDFromUrl)
 
+    if (collectionSummary) {
+      setTitle(collectionSummary.title)
+      setDescription(collectionSummary.description)
+      setSearchTags(collectionSummary.search_tags ?? [])
+      setAccessType(collectionSummary.access_type)
+      setAccessTag(collectionSummary.access_tag ?? null)
+      setCanAccess(collectionSummary.can_access)
+    }
+
     getCollectionByCollectionID(collectionIDFromUrl).then((data)=>{
       if (!data) {
-        setError('Failed to load collection information.')
+        if (!collectionSummary) setError('Failed to load collection information.')
         return
       }
 
       setTitle(data.Title || data.title || 'Question Set')
       setDescription(data.Description || data.description || '')
-      setTags(data.Tags || data.tags || [])
+      setSearchTags(data.SearchTags || data.search_tags || collectionSummary?.search_tags || [])
 
       const rawQuestions = data.Question || data.question || []
       const mappedData: Question[] = rawQuestions.map((item: QuestionDto) => ({
@@ -137,25 +162,28 @@ export const CollectionInfo: React.FC = () => {
         })
         .finally(() => setHistoryLoading(false))
     }
-  }, [collectionIDFromUrl, setCollectionID, setQuestionList, navigate, user?.user_id, setScoreHistoryStore])
+  }, [collectionIDFromUrl, collectionSummary, setCollectionID, setQuestionList, navigate, user?.user_id, setScoreHistoryStore])
 
   const handleStartQuestions = async () => {
-    if (!canAccess) return
+    if (!canAccess || isStarting) return
 
-    if (user?.user_id) {
-      try {
-        startQuiz(collectionIDFromUrl, user.user_id)
-        .then((attempt_id)=>{
-          if (attempt_id) {
-            sessionStorage.setItem('current_attempt_id', attempt_id)
-          }
-        })
-      } catch (err) {
-        console.error('Failed to log quiz attempt start:', err)
-      }
+    if (!user?.user_id) {
+      setError('Please sign in before starting a quiz.')
+      return
     }
 
-    navigate('/quiz?collectionid=' + collectionIDFromUrl)
+    setIsStarting(true)
+    try {
+      const attemptId = await startQuiz(collectionIDFromUrl, user.user_id)
+      if (!attemptId) throw new Error('The quiz attempt could not be created.')
+      sessionStorage.setItem('current_attempt_id', attemptId)
+      navigate('/quiz?collectionid=' + collectionIDFromUrl)
+    } catch (err) {
+      console.error('Failed to start quiz:', err)
+      setError(err instanceof Error ? err.message : 'Failed to start quiz.')
+    } finally {
+      setIsStarting(false)
+    }
   }
 
   const bestScore = scoreHistory.length > 0
@@ -194,9 +222,9 @@ export const CollectionInfo: React.FC = () => {
         <CardHeader className="px-0 pt-0">
           <CardTitle className="text-2xl font-bold">{title}</CardTitle>
           <p>{description}</p>
-          {tags && tags.length > 0 && (
+          {searchTags && searchTags.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-2">
-              {tags.map((tag, idx) => (
+              {searchTags.map((tag, idx) => (
                 <span
                   key={idx}
                   className="inline-flex items-center rounded-md bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground"
@@ -230,7 +258,7 @@ export const CollectionInfo: React.FC = () => {
           {user && !canAccess && (
             <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive font-medium">
               <ShieldAlert className="h-5 w-5 shrink-0" />
-              <span>{accessMessage || 'You have reached the maximum allowed attempts for this quiz.'}</span>
+              <span>{accessMessage || getAccessDeniedMessage(accessType, accessTag)}</span>
             </div>
           )}
 
@@ -246,9 +274,9 @@ export const CollectionInfo: React.FC = () => {
           <Button
             className="w-full"
             onClick={handleStartQuestions}
-            disabled={!canAccess}
+            disabled={!canAccess || isStarting || questionList.length === 0}
           >
-            Start Questions
+            {isStarting ? 'Starting...' : canAccess ? 'Start Questions' : 'Access Required'}
           </Button>
         </CardFooter>
       </Card>

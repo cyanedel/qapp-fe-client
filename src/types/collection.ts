@@ -9,14 +9,22 @@ export interface QuestionCollection {
   collectionID: string
   title: string
   description: string
-  tags: string[]
+  search_tags: string[]
+  access_type: CollectionAccessType
+  access_tag?: string | null
+  can_access: boolean
 }
+
+export type CollectionAccessType = 'public' | 'premium' | 'public_org' | 'grant_org'
 
 export interface CollectionListItemDto {
   collectionid: string
   description: string
   title: string
-  tags: string[]
+  search_tags: string[]
+  access_type: CollectionAccessType
+  access_tag?: string | null
+  can_access: boolean
 }
 
 export interface QuestionDto {
@@ -35,10 +43,29 @@ export interface CollectionDetailDto {
   title?: string
   Description?: string
   description?: string
-  Tags?: string[]
-  tags?: string[]
+  SearchTags?: string[]
+  search_tags?: string[]
   Question?: QuestionDto[]
   question?: QuestionDto[]
+}
+
+export interface CollectionAccessResponse {
+  collection_id: string
+  can_access: boolean
+  access_tag: string
+  attempts_used: number
+  max_attempts: number | null
+  remaining_attempts: number | null
+  message?: string
+}
+
+export interface CollectionEntitlement {
+  entitlement_id: string
+  collection_id: string
+  source: string
+  purchased_at: string
+  expires_at?: string | null
+  status: 'active' | 'revoked' | 'expired'
 }
 
 export interface CollectionState {

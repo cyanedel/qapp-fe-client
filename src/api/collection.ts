@@ -4,10 +4,11 @@ import type { CollectionDetailDto, CollectionListItemDto } from '@/types/collect
 import type { EndQuizRequest, StartQuizResponse, SubmitQuizAnswerRequest } from '@/types/quiz';
 
 export const getCollectionList = (): Promise<CollectionListItemDto[] | null> => {
-  return fetch(env.API_URL + '/collection/list')
+  return fetch(env.API_URL + '/collection/list', { credentials: 'include' })
     .then(response => {
+      handleAuthResponse(response)
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error('Failed to fetch collections');
       }
       return response.json();
     }).then((data)=>{
@@ -20,8 +21,9 @@ export const getCollectionList = (): Promise<CollectionListItemDto[] | null> => 
 }
 
 export const getCollectionByCollectionID = (collection_id: string): Promise<CollectionDetailDto | null> => {
-  return fetch(`${env.API_URL}/collection/${collection_id}`)
+  return fetch(`${env.API_URL}/collection/${collection_id}`, { credentials: 'include' })
     .then((res) => {
+      handleAuthResponse(res)
       if (!res.ok) throw new Error('Failed to fetch collection details')
       return res.json()
     })
@@ -34,8 +36,8 @@ export const getCollectionByCollectionID = (collection_id: string): Promise<Coll
     })
 }
 
-export const startQuiz = (collection_id: string, user_id: string) => {
-  return fetch(`${env.API_URL}/quiz/start`, {
+export const startQuiz = async (collection_id: string, user_id: string) => {
+  const response = await fetch(`${env.API_URL}/quiz/start`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -43,17 +45,14 @@ export const startQuiz = (collection_id: string, user_id: string) => {
       collection_id: collection_id,
       user_id: user_id,
     }),
-  }).then(
-    res => {
-      handleAuthResponse(res)
-      return res.json()
-    }
-  ).then((data: StartQuizResponse)=>{
-    return data.attempt_id
-  }).catch((err) => {
-    console.error('Fetch error:', err);
-    return null;
   })
+
+  handleAuthResponse(response)
+  const data = await response.json()
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to start quiz')
+  }
+  return (data as StartQuizResponse).attempt_id
 }
 
 export const submitQuizAnswer = async (payload: SubmitQuizAnswerRequest) => {

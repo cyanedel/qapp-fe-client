@@ -28,12 +28,15 @@ export const Home: React.FC = () => {
       }
 
       const mappedData: QuestionCollection[] = data.map((item: CollectionListItemDto)=>{
-        const { collectionid, title, description, tags } = item
+        const { collectionid, title, description, search_tags, access_type, access_tag, can_access } = item
         return {
           collectionID: collectionid,
           description: description,
           title: title,
-          tags: tags
+          search_tags: search_tags ?? [],
+          access_type,
+          access_tag,
+          can_access,
         }
       })
 
@@ -47,9 +50,18 @@ export const Home: React.FC = () => {
     });
   }, [resetAnswers, resetCollection])
 
-  const handleSelectCollectionID = (collectionID: string) => {
+  const handleSelectCollectionID = (collection: QuestionCollection) => {
+    const collectionID = collection.collectionID
     setCollectionID(collectionID);
-    navigate("/collection?collectionid=" + collectionID);
+    navigate("/collection?collectionid=" + collectionID, { state: { collection } });
+  }
+
+  const accessLabel = (item: QuestionCollection) => {
+    if (item.can_access) return 'Available'
+    if (item.access_type === 'premium') return 'Premium'
+    if (item.access_type === 'public_org') return 'Organization members'
+    if (item.access_type === 'grant_org') return item.access_tag ? `Requires ${item.access_tag}` : 'Organization grant'
+    return 'Unavailable'
   }
 
   return(
@@ -97,9 +109,12 @@ export const Home: React.FC = () => {
                       <p className='mt-1 line-clamp-2 text-sm leading-6 text-muted-foreground'>
                         {item.description || 'No description provided.'}
                       </p>
-                      {item.tags && item.tags.length > 0 && (
+                      <span className={`mt-3 inline-flex w-fit items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${item.can_access ? 'border-emerald-500/25 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'border-amber-500/25 bg-amber-500/10 text-amber-600 dark:text-amber-400'}`}>
+                        {accessLabel(item)}
+                      </span>
+                      {item.search_tags && item.search_tags.length > 0 && (
                         <div className='mt-3 flex flex-wrap gap-2'>
-                          {item.tags.map((tag, index) => (
+                          {item.search_tags.map((tag, index) => (
                             <span
                               key={`${item.collectionID}-${tag}-${index}`}
                               className='inline-flex items-center rounded-full border border-primary/10 bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground'
@@ -114,9 +129,9 @@ export const Home: React.FC = () => {
                   <div className='shrink-0 md:w-36'>
                     <Button
                       className='h-10 w-full bg-primary font-semibold text-primary-foreground hover:bg-primary/85'
-                      onClick={()=>handleSelectCollectionID(item.collectionID)}
+                      onClick={()=>handleSelectCollectionID(item)}
                     >
-                      Start
+                      {item.can_access ? 'Start' : 'View'}
                       <ArrowRight className='h-4 w-4' />
                     </Button>
                   </div>
