@@ -59,8 +59,8 @@ export interface CollectionAccessResponse {
   can_access: boolean
   access_tag: string
   attempts_used: number
-  max_attempts: number | null
-  remaining_attempts: number | null
+  max_attempts: number /** 0 means unlimited attempts. */
+  remaining_attempts: number
   message: string
 }
 

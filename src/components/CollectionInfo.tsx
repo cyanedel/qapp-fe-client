@@ -249,7 +249,7 @@ export const CollectionInfo: React.FC = () => {
               <div className="flex justify-between items-center text-sm pt-1 border-t border-border/50">
                 <span>Attempt Limit:</span>
                 <span className="font-semibold">
-                  {attemptsUsed} / {maxAttempts} used
+                  {maxAttempts === 0 ? 'Unlimited' : `${attemptsUsed} / ${maxAttempts} used`}
                 </span>
               </div>
             )}
@@ -265,7 +265,11 @@ export const CollectionInfo: React.FC = () => {
           {user && canAccess && maxAttempts !== null && (
             <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-600 dark:text-emerald-400 font-medium">
               <CheckCircle2 className="h-4 w-4 shrink-0" />
-              <span>Access Granted. You have {maxAttempts - attemptsUsed} attempt(s) remaining.</span>
+              <span>
+                {maxAttempts === 0
+                  ? 'Access Granted. You have unlimited attempts.'
+                  : `Access Granted. You have ${maxAttempts - attemptsUsed} attempt(s) remaining.`}
+              </span>
             </div>
           )}
         </CardContent>
