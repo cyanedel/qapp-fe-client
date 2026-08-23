@@ -31,9 +31,11 @@ export const Home: React.FC = () => {
       }
 
       const mappedData: QuestionCollection[] = data.map((item: CollectionListItemDto)=>{
-        const { collectionid, title, description, search_tags, access_type, access_tag, can_access } = item
+        const { collectionid, org_id, display_name, title, description, search_tags, access_type, access_tag, can_access } = item
         return {
           collectionID: collectionid,
+          org_id,
+          display_name,
           description: description,
           title: title,
           search_tags: search_tags ?? [],
@@ -130,6 +132,11 @@ export const Home: React.FC = () => {
                   <p className='mt-1 line-clamp-2 max-w-3xl text-sm leading-6 text-muted-foreground'>
                     {item.description || 'No description provided.'}
                   </p>
+                  {(item.display_name !== null && item.display_name !== undefined) || item.org_id ? (
+                    <p className='mt-1 text-sm font-medium text-primary'>
+                      Publisher: {item.display_name ?? item.org_id}
+                    </p>
+                  ) : null}
                   <div className='mt-3 flex flex-wrap items-center gap-x-2 gap-y-2 text-xs'>
                     <span className={item.can_access ? 'font-semibold text-primary' : 'font-medium text-muted-foreground'}>
                       {accessLabel(item)}

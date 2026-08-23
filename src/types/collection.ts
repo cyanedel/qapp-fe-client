@@ -7,6 +7,8 @@ export interface Question {
 
 export interface QuestionCollection {
   collectionID: string
+  org_id?: string | null
+  display_name?: string | null
   title: string
   description: string
   search_tags: string[]
@@ -19,6 +21,8 @@ export type CollectionAccessType = 'public' | 'premium' | 'public_org' | 'grant_
 
 export interface CollectionListItemDto {
   collectionid: string
+  org_id?: string | null
+  display_name?: string | null
   description: string
   title: string
   search_tags: string[]
