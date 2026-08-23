@@ -1,13 +1,20 @@
 import { env } from '@/config/env';
 import type { User } from '@/types/auth';
 import { collectAccessLogInfo } from '@/lib/accessLogInfo';
+import { ApiError, type ApiResponse, readApiResponse } from '@/api/response';
+
+type AuthResponse = ApiResponse<{ user: User }>
+type MeResponse = ApiResponse<{ user: User }>
 
 export const AUTH_SESSION_EXPIRED_EVENT = 'potero-auth-session-expired'
 
 export class AuthError extends Error {
-  constructor(message = 'Your session has expired. Please sign in again.') {
+  readonly code: string
+
+  constructor(message = 'Your session has expired. Please sign in again.', code = 'AUTH_INVALID_SESSION') {
     super(message)
     this.name = 'AuthError'
+    this.code = code
   }
 }
 
@@ -15,7 +22,7 @@ const notifySessionExpired = () => {
   window.dispatchEvent(new Event(AUTH_SESSION_EXPIRED_EVENT))
 }
 
-export const loginUser = async (email: string, password: string) => {
+export const loginUser = async (email: string, password: string): Promise<AuthResponse> => {
   const response = await fetch(`${env.API_URL}/auth/login`, {
     method: 'POST',
     headers: {
@@ -25,16 +32,10 @@ export const loginUser = async (email: string, password: string) => {
     body: JSON.stringify({ email, password, info: collectAccessLogInfo() }),
   })
 
-  const data = await response.json()
-
-  if (!response.ok) {
-    throw new Error(data.error || 'Failed to login')
-  }
-
-  return data
+  return readApiResponse<AuthResponse>(response, 'Failed to login')
 }
 
-export const registerUser = async (email: string, password: string) => {
+export const registerUser = async (email: string, password: string): Promise<AuthResponse> => {
   const response = await fetch(`${env.API_URL}/auth/register`, {
     method: 'POST',
     headers: {
@@ -46,13 +47,7 @@ export const registerUser = async (email: string, password: string) => {
     }),
   })
 
-  const data = await response.json()
-
-  if (!response.ok) {
-    throw new Error(data.error || 'Failed to register account')
-  }
-
-  return data
+  return readApiResponse<AuthResponse>(response, 'Failed to register account')
 }
 
 export const getCurrentUser = async (): Promise<User> => {
@@ -61,16 +56,16 @@ export const getCurrentUser = async (): Promise<User> => {
     credentials: 'include',
   })
 
-  const data = await response.json()
-
+  const data = await response.json() as MeResponse
   if (!response.ok) {
     if (response.status === 401) {
-      throw new AuthError(data.error)
+      const error = new ApiError(data, 'Failed to load user profile')
+      throw new AuthError(error.message, error.code)
     }
-    throw new Error(data.error || 'Failed to load user profile')
+    throw new ApiError(data, 'Failed to load user profile')
   }
 
-  return data.user ?? data
+  return data.user
 }
 
 export const validateCurrentSession = async (): Promise<User | null> => {
@@ -90,7 +85,7 @@ export const handleAuthResponse = (response: Response) => {
   }
 }
 
-export const logoutUser = async () => {
+export const logoutUser = async (): Promise<ApiResponse> => {
   const response = await fetch(`${env.API_URL}/auth/logout`, {
     method: 'POST',
     headers: {
@@ -100,11 +95,5 @@ export const logoutUser = async () => {
     body: JSON.stringify({ info: collectAccessLogInfo() }),
   })
 
-  const data = await response.json()
-
-  if (!response.ok) {
-    throw new Error(data.error || 'Failed to logout')
-  }
-
-  return data
+  return readApiResponse<ApiResponse>(response, 'Failed to logout')
 }

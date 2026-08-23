@@ -2,38 +2,33 @@ import { env } from '@/config/env';
 import { handleAuthResponse } from '@/api/auth';
 import type { CollectionDetailDto, CollectionListItemDto } from '@/types/collection';
 import type { EndQuizRequest, StartQuizResponse, SubmitQuizAnswerRequest } from '@/types/quiz';
+import { type ApiResponse, readApiResponse } from '@/api/response';
 
-export const getCollectionList = (): Promise<CollectionListItemDto[] | null> => {
-  return fetch(env.API_URL + '/collection/list', { credentials: 'include' })
-    .then(response => {
-      handleAuthResponse(response)
-      if (!response.ok) {
-        throw new Error('Failed to fetch collections');
-      }
-      return response.json();
-    }).then((data)=>{
-      return data["data"]
-    })
-    .catch(err => {
-      console.error('Fetch error:', err);
-      return null;
-    })
+type CollectionListResponse = ApiResponse<{ data: CollectionListItemDto[] }>
+type CollectionDetailResponse = ApiResponse<{ data: CollectionDetailDto }>
+
+export const getCollectionList = async (): Promise<CollectionListItemDto[] | null> => {
+  try {
+    const response = await fetch(env.API_URL + '/collection/list', { credentials: 'include' })
+    handleAuthResponse(response)
+    const data = await readApiResponse<CollectionListResponse>(response, 'Failed to fetch collections')
+    return data.data
+  } catch (err) {
+    console.error('Fetch error:', err)
+    return null
+  }
 }
 
-export const getCollectionByCollectionID = (collection_id: string): Promise<CollectionDetailDto | null> => {
-  return fetch(`${env.API_URL}/collection/${collection_id}`, { credentials: 'include' })
-    .then((res) => {
-      handleAuthResponse(res)
-      if (!res.ok) throw new Error('Failed to fetch collection details')
-      return res.json()
-    })
-    .then((data) => {
-      return data['data'];
-    })
-    .catch((err) => {
-      console.error('Fetch error:', err);
-      return null;
-    })
+export const getCollectionByCollectionID = async (collection_id: string): Promise<CollectionDetailDto | null> => {
+  try {
+    const response = await fetch(`${env.API_URL}/collection/${collection_id}`, { credentials: 'include' })
+    handleAuthResponse(response)
+    const data = await readApiResponse<CollectionDetailResponse>(response, 'Failed to fetch collection details')
+    return data.data
+  } catch (err) {
+    console.error('Fetch error:', err)
+    return null
+  }
 }
 
 export const startQuiz = async (collection_id: string, user_id: string) => {
@@ -48,10 +43,7 @@ export const startQuiz = async (collection_id: string, user_id: string) => {
   })
 
   handleAuthResponse(response)
-  const data = await response.json()
-  if (!response.ok) {
-    throw new Error(data.error || 'Failed to start quiz')
-  }
+  const data = await readApiResponse<StartQuizResponse>(response, 'Failed to start quiz')
   return (data as StartQuizResponse).attempt_id
 }
 
@@ -64,13 +56,7 @@ export const submitQuizAnswer = async (payload: SubmitQuizAnswerRequest) => {
   })
 
   handleAuthResponse(response)
-  const data = await response.json()
-
-  if (!response.ok) {
-    throw new Error(data.error || 'Failed to submit quiz answer')
-  }
-
-  return data
+  return readApiResponse<ApiResponse>(response, 'Failed to submit quiz answer')
 }
 
 export const endQuiz = async (payload: EndQuizRequest) => {
@@ -82,11 +68,5 @@ export const endQuiz = async (payload: EndQuizRequest) => {
   })
 
   handleAuthResponse(response)
-  const data = await response.json()
-
-  if (!response.ok) {
-    throw new Error(data.error || 'Failed to end quiz')
-  }
-
-  return data
+  return readApiResponse<ApiResponse>(response, 'Failed to end quiz')
 }

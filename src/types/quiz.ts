@@ -15,6 +15,7 @@ export interface StartQuizRequest {
 }
 
 export interface StartQuizResponse {
+  code: string
   message: string
   attempt_id: string
   attempt_number: number

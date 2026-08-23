@@ -54,13 +54,14 @@ export interface CollectionDetailDto {
 }
 
 export interface CollectionAccessResponse {
+  code: string
   collection_id: string
   can_access: boolean
   access_tag: string
   attempts_used: number
   max_attempts: number | null
   remaining_attempts: number | null
-  message?: string
+  message: string
 }
 
 export interface CollectionEntitlement {
