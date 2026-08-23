@@ -44,7 +44,7 @@ export const NavBar: React.FC = () => {
     <header
       className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur-sm"
     >
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center space-x-6">
           <Link to="/" className="font-sans text-xl font-semibold tracking-[-0.05em] text-primary">
             Potero

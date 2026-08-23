@@ -75,7 +75,7 @@ export const Login: React.FC = () => {
 
         <Card className="h-full w-full rounded-none border-0 bg-transparent py-10 shadow-none sm:px-8 lg:px-12 lg:py-16">
         <CardHeader className="space-y-2 text-center pb-6">
-          <div className="mx-auto flex w-32 items-center justify-center lg:hidden">
+          <div className="mx-auto flex w-32 items-center justify-center">
             <span className="text-4xl font-semibold tracking-[-0.06em] text-[#5146C7]">Potero</span>
           </div>
           <CardTitle className="text-3xl font-bold tracking-tight text-[#252238]">Welcome back</CardTitle>

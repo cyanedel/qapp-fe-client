@@ -148,7 +148,7 @@ export const CollectionInfo: React.FC = () => {
           setCanAccess(accessData.can_access)
           setAttemptsUsed(accessData.attempts_used)
           setMaxAttempts(accessData.max_attempts)
-          setAccessMessage(accessData.message)
+          setAccessMessage(accessData.message ?? '')
         })
         .catch((err) => console.error('Access check failed:', err))
 

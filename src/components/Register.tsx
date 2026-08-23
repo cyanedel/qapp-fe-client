@@ -94,11 +94,8 @@ export const Register: React.FC = () => {
         ) : (
           <>
             <CardHeader className="space-y-2 text-center pb-6">
-              <div className="mx-auto flex w-32 items-center justify-center lg:hidden">
+              <div className="mx-auto flex w-32 items-center justify-center">
                 <span className="text-4xl font-semibold tracking-[-0.06em] text-[#5146C7]">Potero</span>
-              </div>
-              <div className="mx-auto mt-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FF8A5B]/15 text-[#E46C43] ring-1 ring-[#FF8A5B]/25">
-                <UserPlus className="h-6 w-6" />
               </div>
               <CardTitle className="text-3xl font-bold tracking-tight text-[#252238]">Create your learning profile</CardTitle>
               <CardDescription className="text-[#6D6880]">

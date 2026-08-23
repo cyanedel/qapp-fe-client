@@ -80,7 +80,7 @@ export const UserDetails: React.FC = () => {
   const phoneNumber = [profile?.phone_country_code, profile?.phone_number].filter(Boolean).join(' ')
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto flex w-full flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
       <div className="space-y-2">
         <p className="text-sm font-medium text-primary">Profile</p>
         <h1 className="text-3xl font-bold tracking-tight">Account information</h1>
