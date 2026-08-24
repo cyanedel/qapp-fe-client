@@ -4,12 +4,14 @@ import { Card } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useQuestionStore } from '@/store/useQuestionStore';
 import { useCollectionStore } from '@/store/useCollectionStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { endQuiz, submitQuizAnswer } from '@/api/collection';
 
 export const QuizView: React.FC = () => {
+  const { t } = useTranslation()
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -81,7 +83,7 @@ export const QuizView: React.FC = () => {
   return (
     <Card className="quiz-container p-4">
       {/* Progress Bar Component can go here */}
-      <p>Question {currentIndex + 1} of {questionList?.length}</p>
+      <p>{t('quiz.progress', { current: currentIndex + 1, total: questionList?.length ?? 0 })}</p>
       
       <h2>{questionList?.length > 0 && questionList[currentIndex].questionText}</h2>
       
@@ -95,12 +97,12 @@ export const QuizView: React.FC = () => {
       </RadioGroup>
 
       <div className='flex flex-wrap items-center gap-2 justify-center md:justify-end'>
-        <Button onClick={()=>handleNav("prev")} variant={'outline'} aria-label='back' disabled={currentIndex === 0}>Previous</Button>
+        <Button onClick={()=>handleNav("prev")} variant={'outline'} aria-label={t('quiz.back')} disabled={currentIndex === 0}>{t('common.previous')}</Button>
         { currentIndex + 1 === questionList?.length
           ? <Button onClick={handleEndQuiz} disabled={submitting}>
-              {submitting ? 'Submitting...' : 'Finish & View Result'}
+              {submitting ? t('quiz.submitting') : t('quiz.finish')}
             </Button>
-          : <Button onClick={()=>handleNav("next")}>Next</Button> }
+          : <Button onClick={()=>handleNav("next")}>{t('common.next')}</Button> }
       </div>
     </Card>
   );

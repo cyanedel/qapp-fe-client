@@ -1,12 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
+import { LanguageSelector } from '@/components/LanguageSelector'
 import { logoutUser } from '@/api/auth'
 import { useAuthStore } from '@/store/useAuthStore'
 import { LogIn, LogOut, User as UserIcon, Settings } from 'lucide-react'
 
 export const NavBar: React.FC = () => {
+  const { t } = useTranslation()
   const { user, isAuthenticated, logout } = useAuthStore()
+  const appName = t('app.name')
   // const location = useLocation()
   const navigate = useNavigate()
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
@@ -47,18 +51,19 @@ export const NavBar: React.FC = () => {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center space-x-6">
           <Link to="/" className="font-sans text-xl font-semibold tracking-[-0.05em] text-primary">
-            Potero
+            {appName}
           </Link>
         </div>
 
         <div className="flex items-center space-x-3">
+          <LanguageSelector className="hidden sm:flex" />
           {isAuthenticated && user ? (
             <div ref={userMenuRef} className="relative">
               <button
                 type="button"
                 onClick={() => setIsUserMenuOpen((isOpen) => !isOpen)}
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-muted transition-colors hover:bg-muted/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
-                aria-label="Open account menu"
+                aria-label={t('nav.openAccountMenu')}
                 aria-expanded={isUserMenuOpen}
               >
                 <UserIcon className="h-4 w-4 text-muted-foreground" />
@@ -79,7 +84,7 @@ export const NavBar: React.FC = () => {
                     className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-muted"
                   >
                     <Settings className="h-4 w-4 text-muted-foreground" />
-                    Settings
+                    {t('common.settings')}
                   </button>
                   <button
                     type="button"
@@ -87,7 +92,7 @@ export const NavBar: React.FC = () => {
                     className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-destructive transition-colors hover:bg-destructive/10"
                   >
                     <LogOut className="h-4 w-4" />
-                    Logout
+                    {t('common.logout')}
                   </button>
                 </div>
               )}
@@ -96,11 +101,11 @@ export const NavBar: React.FC = () => {
             <div className="flex items-center space-x-2">
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/login" className="gap-1">
-                  <LogIn className="h-4 w-4" /> Sign In
+                  <LogIn className="h-4 w-4" /> {t('nav.signIn')}
                 </Link>
               </Button>
               <Button size="sm" asChild>
-                <Link to="/register">Register</Link>
+                <Link to="/register">{t('nav.register')}</Link>
               </Button>
             </div>
           )}

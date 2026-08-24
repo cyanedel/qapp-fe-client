@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { AlertCircle, Briefcase, CalendarDays, Edit3, Home, IdCard, Mail, MapPin, Phone, User as UserIcon } from 'lucide-react'
 import { getCurrentUser } from '@/api/auth'
+import { ApiError } from '@/api/response'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
@@ -8,7 +10,9 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { useUserStore } from '@/store/useUserStore'
 
 export const UserDetails: React.FC = () => {
+  const { t, i18n } = useTranslation()
   const authUser = useAuthStore((state) => state.user)
+  const appName = t('app.name')
   const { profile, setProfile } = useUserStore()
   const [loading, setLoading] = useState(!profile)
   const [error, setError] = useState<string | null>(null)
@@ -21,7 +25,7 @@ export const UserDetails: React.FC = () => {
       setError(null)
 
       if (!authUser) {
-        setError('Unable to load account information without an active session.')
+        setError(t('errors.AUTHENTICATION_REQUIRED', { defaultValue: t('errors.generic') }))
         setLoading(false)
         return
       }
@@ -34,7 +38,9 @@ export const UserDetails: React.FC = () => {
         }
       } catch (err: unknown) {
         if (isMounted) {
-          const errorMessage = err instanceof Error ? err.message : 'Unable to load account information.'
+          const errorMessage = err instanceof ApiError
+            ? t(`errors.${err.code}`, { defaultValue: t('errors.generic') })
+            : t('errors.generic')
           setError(errorMessage)
         }
       } finally {
@@ -49,43 +55,43 @@ export const UserDetails: React.FC = () => {
     return () => {
       isMounted = false
     }
-  }, [authUser, setProfile])
+  }, [authUser, setProfile, t])
 
   const joinedDate = useMemo(() => {
     if (!profile?.created_at) {
       return '-'
     }
 
-    return new Intl.DateTimeFormat('en', {
+      return new Intl.DateTimeFormat(i18n.language, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     }).format(new Date(profile.created_at))
-  }, [profile?.created_at])
+  }, [i18n.language, profile?.created_at])
 
   const dateOfBirth = useMemo(() => {
     if (!profile?.date_of_birth) {
       return null
     }
 
-    return new Intl.DateTimeFormat('en', {
+      return new Intl.DateTimeFormat(i18n.language, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     }).format(new Date(profile.date_of_birth))
-  }, [profile?.date_of_birth])
+  }, [i18n.language, profile?.date_of_birth])
 
-  const displayName = profile?.display_name || profile?.username || 'User'
+  const displayName = profile?.display_name || profile?.username || t('profile.user')
   const avatarInitial = displayName.charAt(0).toUpperCase()
   const phoneNumber = [profile?.phone_country_code, profile?.phone_number].filter(Boolean).join(' ')
 
   return (
     <div className="mx-auto flex w-full flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
       <div className="space-y-2">
-        <p className="text-sm font-medium text-primary">Profile</p>
-        <h1 className="text-3xl font-bold tracking-tight">Account information</h1>
+        <p className="text-sm font-medium text-primary">{t('common.profile')}</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('common.accountInformation')}</h1>
         <p className="text-sm text-muted-foreground">
-          View and manage your Potero profile details.
+          {t('profile.description', { appName })}
         </p>
       </div>
 
@@ -112,14 +118,14 @@ export const UserDetails: React.FC = () => {
                 </div>
               )}
               <div>
-                <CardTitle className="text-2xl font-semibold">{loading ? 'Loading profile...' : displayName}</CardTitle>
-                <CardDescription>{profile?.email || 'Account details will appear here.'}</CardDescription>
+                <CardTitle className="text-2xl font-semibold">{loading ? t('profile.loadingProfile') : displayName}</CardTitle>
+                <CardDescription>{profile?.email || t('profile.detailsPending')}</CardDescription>
               </div>
             </div>
 
             <Button type="button" className="w-full sm:w-auto">
               <Edit3 className="h-4 w-4" />
-              Edit profile
+              {t('profile.edit')}
             </Button>
           </div>
         </CardHeader>
@@ -128,23 +134,23 @@ export const UserDetails: React.FC = () => {
           {loading ? (
             <div className="flex min-h-48 items-center justify-center text-muted-foreground">
               <Spinner className="mr-2 h-5 w-5" />
-              Loading account information...
+              {t('profile.loading')}
             </div>
           ) : (
             <div className="space-y-6">
-              <ProfileSection title="Basic Information">
-                <ProfileField icon={<IdCard className="h-4 w-4" />} label="Real name" value={profile?.real_name} />
-                <ProfileField icon={<UserIcon className="h-4 w-4" />} label="Display name" value={profile?.display_name} />
-                <ProfileField icon={<UserIcon className="h-4 w-4" />} label="Username" value={profile?.username} />
-                <ProfileField icon={<MapPin className="h-4 w-4" />} label="Place of birth" value={profile?.place_of_birth} />
-                <ProfileField icon={<CalendarDays className="h-4 w-4" />} label="Date of birth" value={dateOfBirth} />
-                <ProfileField icon={<UserIcon className="h-4 w-4" />} label="Gender" value={profile?.gender} />
+              <ProfileSection title={t('profile.basic')}>
+                <ProfileField icon={<IdCard className="h-4 w-4" />} label={t('profile.realName')} value={profile?.real_name} />
+                <ProfileField icon={<UserIcon className="h-4 w-4" />} label={t('profile.displayName')} value={profile?.display_name} />
+                <ProfileField icon={<UserIcon className="h-4 w-4" />} label={t('profile.username')} value={profile?.username} />
+                <ProfileField icon={<MapPin className="h-4 w-4" />} label={t('profile.placeOfBirth')} value={profile?.place_of_birth} />
+                <ProfileField icon={<CalendarDays className="h-4 w-4" />} label={t('profile.dateOfBirth')} value={dateOfBirth} />
+                <ProfileField icon={<UserIcon className="h-4 w-4" />} label={t('profile.gender')} value={profile?.gender} />
               </ProfileSection>
 
-              <ProfileSection title="Contact">
-                <ProfileField icon={<Phone className="h-4 w-4" />} label="Phone" value={phoneNumber} />
-                <ProfileField icon={<Mail className="h-4 w-4" />} label="Email address" value={profile?.email} />
-                <ProfileField icon={<Home className="h-4 w-4" />} label="Domicile address" value={profile?.domicile_address} />
+              <ProfileSection title={t('profile.contact')}>
+                <ProfileField icon={<Phone className="h-4 w-4" />} label={t('profile.phone')} value={phoneNumber} />
+                <ProfileField icon={<Mail className="h-4 w-4" />} label={t('common.emailAddress')} value={profile?.email} />
+                <ProfileField icon={<Home className="h-4 w-4" />} label={t('profile.domicileAddress')} value={profile?.domicile_address} />
                 <label className="flex items-center gap-3 rounded-xl border bg-background p-4 text-sm font-medium text-foreground">
                   <input
                     type="checkbox"
@@ -152,14 +158,14 @@ export const UserDetails: React.FC = () => {
                     checked={Boolean(profile?.domicile_same_as_ktp)}
                     readOnly
                   />
-                  Domicile address is the same as KTP address
+                  {t('profile.sameDomicile')}
                 </label>
-                <ProfileField icon={<MapPin className="h-4 w-4" />} label="KTP address" value={profile?.ktp_address} />
+                <ProfileField icon={<MapPin className="h-4 w-4" />} label={t('profile.ktpAddress')} value={profile?.ktp_address} />
               </ProfileSection>
 
-              <ProfileSection title="Others">
-                <ProfileField icon={<Briefcase className="h-4 w-4" />} label="Profession" value={profile?.profession} />
-                <ProfileField icon={<CalendarDays className="h-4 w-4" />} label="Joined" value={joinedDate} />
+              <ProfileSection title={t('profile.others')}>
+                <ProfileField icon={<Briefcase className="h-4 w-4" />} label={t('profile.profession')} value={profile?.profession} />
+                <ProfileField icon={<CalendarDays className="h-4 w-4" />} label={t('profile.joined')} value={joinedDate} />
               </ProfileSection>
             </div>
           )}

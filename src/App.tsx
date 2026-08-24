@@ -14,6 +14,7 @@ import { AUTH_SESSION_EXPIRED_EVENT, validateCurrentSession } from "@/api/auth"
 import { Spinner } from "@/components/ui/spinner"
 import { useAuthStore } from "@/store/useAuthStore"
 import { cn } from "@/lib/utils"
+import { useTranslation } from "react-i18next"
 
 function App() {
   const navigate = useNavigate()
@@ -118,11 +119,15 @@ function App() {
 
 const isAuthRoute = (pathname: string) => pathname === '/login' || pathname === '/register'
 
-const AuthLoading = () => (
-  <div className="flex min-h-64 items-center justify-center text-muted-foreground">
-    <Spinner className="mr-2 h-5 w-5" />
-    Checking session...
-  </div>
-)
+const AuthLoading = () => {
+  const { t } = useTranslation()
+
+  return (
+    <div className="flex min-h-64 items-center justify-center text-muted-foreground">
+      <Spinner className="mr-2 h-5 w-5" />
+      {t('app.checkingSession')}
+    </div>
+  )
+}
 
 export default App

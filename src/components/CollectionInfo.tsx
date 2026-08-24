@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
@@ -12,22 +13,7 @@ import { ShieldAlert, CheckCircle2, Trophy, Clock, Target, TrendingUp, TrendingD
 import { getCollectionByCollectionID, startQuiz } from '@/api/collection';
 import { getUserAccessStatus } from '@/api/user';
 import { getScoreHistory } from '@/api/history';
-
-const formatDate = (dateString: string): string => {
-  try {
-    const date = new Date(dateString)
-    return date.toLocaleDateString(undefined, {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    }) + ' at ' + date.toLocaleTimeString(undefined, {
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  } catch {
-    return dateString
-  }
-}
+import { ApiError } from '@/api/response'
 
 const getScoreColor = (percentage: number): string => {
   if (percentage >= 80) return 'text-emerald-500'
@@ -54,18 +40,8 @@ const getTrendIcon = (current: ScoreHistory, previous: ScoreHistory | undefined)
   return <Minus className="h-3.5 w-3.5 text-muted-foreground" />
 }
 
-const getAccessDeniedMessage = (accessType: CollectionAccessType, accessTag: string | null) => {
-  if (accessType === 'premium') return 'This collection requires a premium purchase.'
-  if (accessType === 'public_org') return 'You must be an active member of the organization to access this collection.'
-  if (accessType === 'grant_org') {
-    return accessTag
-      ? `Your organization has not granted access through the ${accessTag} access tag.`
-      : 'Your organization has not granted access to this collection.'
-  }
-  return 'You do not currently have access to this collection.'
-}
-
 export const CollectionInfo: React.FC = () => {
+  const { t, i18n } = useTranslation()
   const [searchParams] = useSearchParams()
   const location = useLocation()
   const collectionIDFromUrl = searchParams.get('collectionid') || ''
@@ -97,6 +73,19 @@ export const CollectionInfo: React.FC = () => {
   const setScoreHistoryStore = useScoreHistoryStore((state) => state.setScoreHistory)
 
   const navigate = useNavigate()
+  const formatDate = (dateString: string): string => {
+    try {
+      return new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(dateString))
+    } catch {
+      return dateString
+    }
+  }
+  const getAccessDeniedMessage = (type: CollectionAccessType, tag: string | null) => {
+    if (type === 'premium') return t('collection.accessDenied.premium')
+    if (type === 'public_org') return t('collection.accessDenied.organizationMember')
+    if (type === 'grant_org') return tag ? t('collection.accessDenied.tag', { tag }) : t('collection.accessDenied.organization')
+    return t('collection.accessDenied.default')
+  }
 
   useEffect(() => {
     if (!collectionIDFromUrl) {
@@ -117,11 +106,11 @@ export const CollectionInfo: React.FC = () => {
 
     getCollectionByCollectionID(collectionIDFromUrl).then((data)=>{
       if (!data) {
-        if (!collectionSummary) setError('Failed to load collection information.')
+        if (!collectionSummary) setError(t('errors.COLLECTION_LOAD_FAILED', { defaultValue: t('errors.generic') }))
         return
       }
 
-      setTitle(data.Title || data.title || 'Question Set')
+      setTitle(data.Title || data.title || t('collection.fallbackTitle'))
       setDescription(data.Description || data.description || '')
       setSearchTags(data.SearchTags || data.search_tags || collectionSummary?.search_tags || [])
 
@@ -136,7 +125,7 @@ export const CollectionInfo: React.FC = () => {
     })
     .catch((err) => {
       console.error(err)
-      setError('Failed to load collection information.')
+      setError(t('errors.COLLECTION_LOAD_FAILED', { defaultValue: t('errors.generic') }))
     })
     .finally(() => {
       setIsLoading(false)
@@ -162,25 +151,27 @@ export const CollectionInfo: React.FC = () => {
         })
         .finally(() => setHistoryLoading(false))
     }
-  }, [collectionIDFromUrl, collectionSummary, setCollectionID, setQuestionList, navigate, user?.user_id, setScoreHistoryStore])
+  }, [collectionIDFromUrl, collectionSummary, setCollectionID, setQuestionList, navigate, user?.user_id, setScoreHistoryStore, t])
 
   const handleStartQuestions = async () => {
     if (!canAccess || isStarting) return
 
     if (!user?.user_id) {
-      setError('Please sign in before starting a quiz.')
+      setError(t('errors.AUTHENTICATION_REQUIRED', { defaultValue: t('errors.generic') }))
       return
     }
 
     setIsStarting(true)
     try {
       const attemptId = await startQuiz(collectionIDFromUrl, user.user_id)
-      if (!attemptId) throw new Error('The quiz attempt could not be created.')
+      if (!attemptId) throw new Error(t('errors.QUIZ_START_FAILED', { defaultValue: t('errors.generic') }))
       sessionStorage.setItem('current_attempt_id', attemptId)
       navigate('/quiz?collectionid=' + collectionIDFromUrl)
     } catch (err) {
       console.error('Failed to start quiz:', err)
-      setError(err instanceof Error ? err.message : 'Failed to start quiz.')
+      setError(err instanceof ApiError
+        ? t(`errors.${err.code}`, { defaultValue: t('errors.generic') })
+        : t('errors.QUIZ_START_FAILED', { defaultValue: t('errors.generic') }))
     } finally {
       setIsStarting(false)
     }
@@ -198,7 +189,7 @@ export const CollectionInfo: React.FC = () => {
     return (
       <div className="flex min-h-64 flex-col items-center justify-center gap-3 text-muted-foreground">
         <Spinner className="size-10" />
-        <p>Loading collection details...</p>
+        <p>{t('collection.loading')}</p>
       </div>
     )
   }
@@ -209,7 +200,7 @@ export const CollectionInfo: React.FC = () => {
         <Card className="p-6">
           <p className="text-destructive font-medium">{error}</p>
           <Button className="mt-4" onClick={() => navigate('/')}>
-            Back to Home
+            {t('common.backToHome')}
           </Button>
         </Card>
       </div>
@@ -239,17 +230,17 @@ export const CollectionInfo: React.FC = () => {
         <CardContent className="px-0 py-4 space-y-4">
           <div className="rounded-lg bg-muted p-4 space-y-2">
             <h3 className="font-semibold text-xs text-muted-foreground uppercase tracking-wider">
-              Collection Overview
+              {t('collection.overview')}
             </h3>
             <div className="flex justify-between items-center text-sm">
-              <span>Total Questions:</span>
+              <span>{t('collection.totalQuestions')}</span>
               <span className="font-bold text-primary">{questionList.length}</span>
             </div>
             {maxAttempts !== null && (
               <div className="flex justify-between items-center text-sm pt-1 border-t border-border/50">
-                <span>Attempt Limit:</span>
+                <span>{t('collection.attemptLimit')}</span>
                 <span className="font-semibold">
-                  {maxAttempts === 0 ? 'Unlimited' : `${attemptsUsed} / ${maxAttempts} used`}
+                  {maxAttempts === 0 ? t('collection.unlimited') : t('collection.attemptsUsed', { used: attemptsUsed, total: maxAttempts })}
                 </span>
               </div>
             )}
@@ -267,8 +258,8 @@ export const CollectionInfo: React.FC = () => {
               <CheckCircle2 className="h-4 w-4 shrink-0" />
               <span>
                 {maxAttempts === 0
-                  ? 'Access Granted. You have unlimited attempts.'
-                  : `Access Granted. You have ${maxAttempts - attemptsUsed} attempt(s) remaining.`}
+                  ? t('collection.accessGrantedUnlimited')
+                  : t('collection.accessGrantedRemaining', { count: maxAttempts - attemptsUsed })}
               </span>
             </div>
           )}
@@ -280,7 +271,7 @@ export const CollectionInfo: React.FC = () => {
             onClick={handleStartQuestions}
             disabled={!canAccess || isStarting || questionList.length === 0}
           >
-            {isStarting ? 'Starting...' : canAccess ? 'Start Questions' : 'Access Required'}
+            {isStarting ? t('collection.starting') : canAccess ? t('collection.startQuestions') : t('collection.accessRequired')}
           </Button>
         </CardFooter>
       </Card>
@@ -290,10 +281,10 @@ export const CollectionInfo: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Trophy className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold">Previous Results</h2>
+            <h2 className="text-lg font-semibold">{t('collection.previousResults')}</h2>
             {scoreHistory.length > 0 && (
               <span className="ml-auto text-xs font-medium text-muted-foreground bg-muted rounded-full px-2.5 py-0.5">
-                {scoreHistory.length} attempt{scoreHistory.length !== 1 ? 's' : ''}
+                {t('collection.attempts', { count: scoreHistory.length })}
               </span>
             )}
           </div>
@@ -304,7 +295,7 @@ export const CollectionInfo: React.FC = () => {
               <div className="rounded-xl border bg-card p-4 space-y-1">
                 <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   <Trophy className="h-3.5 w-3.5" />
-                  Best Score
+                  {t('collection.bestScore')}
                 </div>
                 <p className={`text-2xl font-bold ${getScoreColor(bestScore!)}`}>
                   {bestScore}%
@@ -313,7 +304,7 @@ export const CollectionInfo: React.FC = () => {
               <div className="rounded-xl border bg-card p-4 space-y-1">
                 <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   <Target className="h-3.5 w-3.5" />
-                  Average
+                  {t('collection.average')}
                 </div>
                 <p className={`text-2xl font-bold ${getScoreColor(avgScore!)}`}>
                   {avgScore}%
@@ -325,7 +316,7 @@ export const CollectionInfo: React.FC = () => {
           {historyLoading ? (
             <div className="flex items-center justify-center py-8 text-muted-foreground">
               <Spinner className="size-6 mr-2" />
-              <span className="text-sm">Loading history...</span>
+              <span className="text-sm">{t('collection.loadingHistory')}</span>
             </div>
           ) : scoreHistory.length === 0 ? (
             <Card className="p-6">
@@ -333,9 +324,9 @@ export const CollectionInfo: React.FC = () => {
                 <div className="rounded-full bg-muted p-3">
                   <Clock className="h-6 w-6 text-muted-foreground" />
                 </div>
-                <p className="text-sm font-medium text-muted-foreground">No attempts yet</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('collection.noAttempts')}</p>
                 <p className="text-xs text-muted-foreground/70">
-                  Start the quiz to see your results here.
+                  {t('collection.noAttemptsDescription')}
                 </p>
               </div>
             </Card>
@@ -351,7 +342,7 @@ export const CollectionInfo: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-semibold text-foreground">
-                          Attempt #{scoreHistory.length - index}
+                          {t('collection.attemptNumber', { number: scoreHistory.length - index })}
                         </span>
                         {getTrendIcon(item, scoreHistory[index + 1])}
                       </div>
@@ -363,7 +354,7 @@ export const CollectionInfo: React.FC = () => {
                     {/* Score bar */}
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>{item.score} / {item.total_questions} correct</span>
+                        <span>{t('collection.correctCount', { score: item.score, total: item.total_questions })}</span>
                       </div>
                       <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
                         <div

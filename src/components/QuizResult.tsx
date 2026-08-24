@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Card } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -12,6 +13,7 @@ import type { ScoreHistory } from '@/types/history'
 const REDIRECT_SECONDS = env.TIMEOUT_UI / 1000
 
 export const QuizResult: React.FC = () => {
+  const { t, i18n } = useTranslation()
   const { user } = useAuthStore()
   const collectionID = useCollectionStore((state) => state.collectionID)
   const navigate = useNavigate()
@@ -60,16 +62,7 @@ export const QuizResult: React.FC = () => {
   const formatCompletionTime = (dateString: string): string => {
     try {
       const date = new Date(dateString)
-      return date.toLocaleDateString(undefined, {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      }) + ' at ' + date.toLocaleTimeString(undefined, {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      })
+      return new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeStyle: 'medium' }).format(date)
     } catch {
       return dateString
     }
@@ -88,18 +81,18 @@ export const QuizResult: React.FC = () => {
   }
 
   const getScoreLabel = (percentage: number): string => {
-    if (percentage >= 90) return 'Excellent!'
-    if (percentage >= 80) return 'Great job!'
-    if (percentage >= 60) return 'Good effort!'
-    if (percentage >= 40) return 'Keep practicing!'
-    return 'Don\'t give up!'
+    if (percentage >= 90) return t('result.excellent')
+    if (percentage >= 80) return t('result.great')
+    if (percentage >= 60) return t('result.good')
+    if (percentage >= 40) return t('result.practice')
+    return t('result.encouragement')
   }
 
   if (loading) {
     return (
       <div className="flex min-h-64 flex-col items-center justify-center gap-3 text-muted-foreground">
         <Spinner className="size-10" />
-        <p>Loading your results...</p>
+        <p>{t('result.loading')}</p>
       </div>
     )
   }
@@ -118,8 +111,8 @@ export const QuizResult: React.FC = () => {
               <CheckCircle2 className="h-6 w-6 text-emerald-500" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Quiz Completed!</h1>
-              <p className="text-sm text-muted-foreground">Your answers have been submitted successfully.</p>
+              <h1 className="text-xl font-bold text-foreground">{t('result.title')}</h1>
+              <p className="text-sm text-muted-foreground">{t('result.submitted')}</p>
             </div>
           </div>
         </div>
@@ -165,7 +158,7 @@ export const QuizResult: React.FC = () => {
               <div className="rounded-lg bg-muted/50 border p-4">
                 <div className="flex items-center gap-2 text-sm">
                   <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <span className="text-muted-foreground">Completed:</span>
+                  <span className="text-muted-foreground">{t('result.completed')}</span>
                   <span className="font-medium text-foreground ml-auto">
                     {formatCompletionTime(latestScore.completed_at)}
                   </span>
@@ -175,7 +168,7 @@ export const QuizResult: React.FC = () => {
           ) : (
             <div className="text-center py-4">
               <p className="text-sm text-muted-foreground">
-                Could not load score details. You will be redirected shortly.
+                {t('result.unavailable')}
               </p>
             </div>
           )}
@@ -186,10 +179,10 @@ export const QuizResult: React.FC = () => {
               <ArrowLeft className="h-4 w-4 text-primary mt-0.5 shrink-0" />
               <div className="space-y-1">
                 <p className="text-sm font-medium text-foreground">
-                  Redirecting in {countdown} second{countdown !== 1 ? 's' : ''}...
+                  {t('result.redirecting', { count: countdown })}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  You will be taken back to the collection page to view your full history.
+                  {t('result.redirectDescription')}
                 </p>
               </div>
             </div>

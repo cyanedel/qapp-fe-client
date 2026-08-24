@@ -3,6 +3,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import type { CollectionListItemDto, QuestionCollection } from '@/types/collection';
 import { useCollectionStore } from '@/store/useCollectionStore';
 import { useQuestionStore } from '@/store/useQuestionStore';
@@ -11,6 +12,7 @@ import { getCollectionList } from '@/api/collection';
 import { ArrowRight, BookOpen, Layers, Sparkles } from 'lucide-react';
 
 export const Home: React.FC = () => {
+  const { t } = useTranslation()
   const [collectionList, setCollectionList] = useState<QuestionCollection[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const setCollectionID = useCollectionStore((state)=>state.setCollectionID)
@@ -18,7 +20,7 @@ export const Home: React.FC = () => {
   const resetAnswers = useQuestionStore((state)=>state.reset)
   const user = useAuthStore((state) => state.user)
   const navigate = useNavigate();
-  const displayName = user?.display_name || user?.real_name || user?.username || 'there'
+  const displayName = user?.display_name || user?.real_name || user?.username || ''
   
   useEffect(()=>{
     resetCollection();
@@ -62,11 +64,11 @@ export const Home: React.FC = () => {
   }
 
   const accessLabel = (item: QuestionCollection) => {
-    if (item.can_access) return 'Available'
-    if (item.access_type === 'premium') return 'Premium'
-    if (item.access_type === 'public_org') return 'Organization members'
-    if (item.access_type === 'grant_org') return item.access_tag ? `Requires ${item.access_tag}` : 'Organization grant'
-    return 'Unavailable'
+    if (item.can_access) return t('home.access.available')
+    if (item.access_type === 'premium') return t('home.access.premium')
+    if (item.access_type === 'public_org') return t('home.access.organizationMembers')
+    if (item.access_type === 'grant_org') return item.access_tag ? t('home.access.requiresTag', { tag: item.access_tag }) : t('home.access.organizationGrant')
+    return t('home.access.unavailable')
   }
 
   return(
@@ -76,21 +78,21 @@ export const Home: React.FC = () => {
           <div className='max-w-2xl text-left'>
             <div className='mb-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/70'>
               <Sparkles className='h-4 w-4' />
-              <span>Your learning space</span>
+              <span>{t('home.learningSpace')}</span>
             </div>
-            <h1 className='text-left text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl'>Welcome back, {displayName}</h1>
+            <h1 className='text-left text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl'>{t('home.welcome', { name: displayName })}</h1>
             <p className='mt-3 max-w-xl text-sm leading-6 text-white/75 sm:text-base'>
-              Pick a question set and keep your momentum going.
+              {t('home.subtitle')}
             </p>
           </div>
           <div className='flex shrink-0 gap-6 border-t border-white/15 pt-5 md:border-l md:border-t-0 md:pl-6 md:pt-0'>
             <div>
               <p className='text-2xl font-semibold text-white'>{collectionList.length}</p>
-              <p className='mt-1 text-xs text-white/65'>Question sets</p>
+              <p className='mt-1 text-xs text-white/65'>{t('home.questionSets')}</p>
             </div>
             <div>
               <p className='text-2xl font-semibold text-white'>{collectionList.filter((item) => item.can_access).length}</p>
-              <p className='mt-1 text-xs text-white/65'>Available now</p>
+              <p className='mt-1 text-xs text-white/65'>{t('home.availableNow')}</p>
             </div>
           </div>
         </div>
@@ -100,26 +102,26 @@ export const Home: React.FC = () => {
         <div>
           <div className='flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary'>
             <BookOpen className='h-4 w-4' />
-            <span>Question sets</span>
+            <span>{t('home.questionSets')}</span>
           </div>
-          <h2 className='mt-2 text-2xl font-semibold tracking-tight'>Continue exploring</h2>
+          <h2 className='mt-2 text-2xl font-semibold tracking-tight'>{t('home.continueExploring')}</h2>
         </div>
-        <p className='hidden text-sm text-muted-foreground sm:block'>Choose a set to view its details.</p>
+        <p className='hidden text-sm text-muted-foreground sm:block'>{t('home.chooseSet')}</p>
       </div>
 
       {isLoading ? (
         <div className='flex min-h-64 flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-border bg-card/60 text-muted-foreground'>
           <Spinner className='size-9 text-primary' />
-          <p>Loading question sets...</p>
+          <p>{t('home.loading')}</p>
         </div>
       ) : collectionList.length === 0 ? (
         <Card className='border-border bg-card p-8 text-center shadow-sm'>
           <div className='mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground'>
             <Layers className='h-6 w-6' />
           </div>
-          <h2 className='text-xl font-semibold'>No question sets available</h2>
+          <h2 className='text-xl font-semibold'>{t('home.emptyTitle')}</h2>
           <p className='mt-2 text-sm text-muted-foreground'>
-            Available collections will appear here once they are added.
+            {t('home.emptyDescription')}
           </p>
         </Card>
       ) : (
@@ -130,11 +132,11 @@ export const Home: React.FC = () => {
                 <div className='min-w-0 flex-1 text-left'>
                   <h2 className='text-lg font-semibold tracking-tight text-foreground'>{item.title}</h2>
                   <p className='mt-1 line-clamp-2 max-w-3xl text-sm leading-6 text-muted-foreground'>
-                    {item.description || 'No description provided.'}
+                    {item.description || t('home.noDescription')}
                   </p>
                   {(item.display_name !== null && item.display_name !== undefined) || item.org_id ? (
                     <p className='mt-1 text-sm font-medium text-primary'>
-                      Publisher: {item.display_name ?? item.org_id}
+                      {t('home.publisher', { publisher: item.display_name ?? item.org_id })}
                     </p>
                   ) : null}
                   <div className='mt-3 flex flex-wrap items-center gap-x-2 gap-y-2 text-xs'>
@@ -148,7 +150,7 @@ export const Home: React.FC = () => {
                       </React.Fragment>
                     ))}
                     {(item.search_tags?.length ?? 0) > 2 && (
-                      <span className='text-muted-foreground'>+{item.search_tags!.length - 2} more</span>
+                      <span className='text-muted-foreground'>{t('home.more', { count: item.search_tags!.length - 2 })}</span>
                     )}
                   </div>
                 </div>
@@ -158,7 +160,7 @@ export const Home: React.FC = () => {
                       className='h-10 w-full font-semibold transition-colors'
                       onClick={()=>handleSelectCollectionID(item)}
                     >
-                      {item.can_access ? 'Start' : 'View'}
+                      {item.can_access ? t('common.start') : t('common.view')}
                       <ArrowRight className='h-4 w-4' />
                     </Button>
                 </div>

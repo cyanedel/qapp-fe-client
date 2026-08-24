@@ -1,0 +1,187 @@
+{
+  "languageSelector": {
+    "label": "Language"
+  },
+  "languages": {
+    "en": "English",
+    "id": "Indonesia",
+    "ko": "한국어",
+    "zh-CN": "简体中文"
+  },
+  "app": {
+    "name": "Potero",
+    "checkingSession": "Checking session..."
+  },
+  "common": {
+    "loading": "Loading...",
+    "backToHome": "Back to Home",
+    "previous": "Previous",
+    "next": "Next",
+    "start": "Start",
+    "view": "View",
+    "close": "Close",
+    "settings": "Settings",
+    "logout": "Logout",
+    "profile": "Profile",
+    "accountInformation": "Account information",
+    "emailAddress": "Email address",
+    "password": "Password"
+  },
+  "login": {
+    "heroTitle": "A smarter way to learn, one question at a time.",
+    "heroDescription": "Pick up where you left off, discover new topics, and make every quiz count.",
+    "heroFooter": "Friendly quizzes for curious minds",
+    "title": "Welcome back",
+    "description": "Continue your quiz journey with {{appName}}.",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create an account",
+    "demoAccount": "Student {{number}}",
+    "validation": {
+      "emailRequired": "Please enter your email address.",
+      "emailInvalid": "Enter a valid email address.",
+      "passwordRequired": "Please enter your password."
+    }
+  },
+  "register": {
+    "heroTitle": "Make learning feel like progress.",
+    "heroDescription": "Create your account and turn every quiz into a small win.",
+    "heroFooter": "Start with something curious",
+    "successTitle": "Registration successful",
+    "successDescription": "Your account has been created. Redirecting to sign in in {{seconds}} seconds.",
+    "goToSignIn": "Go to Sign In",
+    "title": "Create your learning profile",
+    "description": "Start building your quiz journey with {{appName}}.",
+    "creating": "Creating account...",
+    "register": "Register",
+    "hasAccount": "Already have an account?",
+    "validation": {
+      "emailRequired": "Please enter your email address.",
+      "emailInvalid": "Enter a valid email address.",
+      "passwordRequired": "Please enter your password."
+    }
+  },
+  "nav": {
+    "openAccountMenu": "Open account menu",
+    "signIn": "Sign In",
+    "register": "Register"
+  },
+  "home": {
+    "learningSpace": "Your learning space",
+    "welcome": "Welcome back, {{name}}",
+    "subtitle": "Pick a question set and keep your momentum going.",
+    "questionSets": "Question sets",
+    "availableNow": "Available now",
+    "continueExploring": "Continue exploring",
+    "chooseSet": "Choose a set to view its details.",
+    "loading": "Loading question sets...",
+    "emptyTitle": "No question sets available",
+    "emptyDescription": "Available collections will appear here once they are added.",
+    "noDescription": "No description provided.",
+    "publisher": "Publisher: {{publisher}}",
+    "more": "+{{count}} more",
+    "access": {
+      "available": "Available",
+      "premium": "Premium",
+      "organizationMembers": "Organization members",
+      "requiresTag": "Requires {{tag}}",
+      "organizationGrant": "Organization grant",
+      "unavailable": "Unavailable"
+    }
+  },
+  "collection": {
+    "loading": "Loading collection details...",
+    "fallbackTitle": "Question Set",
+    "overview": "Collection overview",
+    "totalQuestions": "Total questions:",
+    "attemptLimit": "Attempt limit:",
+    "unlimited": "Unlimited",
+    "attemptsUsed": "{{used}} / {{total}} used",
+    "accessGrantedUnlimited": "Access granted. You have unlimited attempts.",
+    "accessGrantedRemaining": "Access granted. You have {{count}} attempt remaining.",
+    "accessGrantedRemaining_other": "Access granted. You have {{count}} attempts remaining.",
+    "starting": "Starting...",
+    "startQuestions": "Start questions",
+    "accessRequired": "Access required",
+    "previousResults": "Previous results",
+    "attempts_one": "{{count}} attempt",
+    "attempts_other": "{{count}} attempts",
+    "bestScore": "Best score",
+    "average": "Average",
+    "loadingHistory": "Loading history...",
+    "noAttempts": "No attempts yet",
+    "noAttemptsDescription": "Start the quiz to see your results here.",
+    "attemptNumber": "Attempt #{{number}}",
+    "correctCount": "{{score}} / {{total}} correct",
+    "accessDenied": {
+      "premium": "This collection requires a premium purchase.",
+      "organizationMember": "You must be an active member of the organization to access this collection.",
+      "tag": "Your organization has not granted access through the {{tag}} access tag.",
+      "organization": "Your organization has not granted access to this collection.",
+      "default": "You do not currently have access to this collection."
+    }
+  },
+  "quiz": {
+    "progress": "Question {{current}} of {{total}}",
+    "back": "Back",
+    "submitting": "Submitting...",
+    "finish": "Finish & view result"
+  },
+  "result": {
+    "loading": "Loading your results...",
+    "title": "Quiz completed!",
+    "submitted": "Your answers have been submitted successfully.",
+    "excellent": "Excellent!",
+    "great": "Great job!",
+    "good": "Good effort!",
+    "practice": "Keep practicing!",
+    "encouragement": "Don't give up!",
+    "completed": "Completed:",
+    "unavailable": "Could not load score details. You will be redirected shortly.",
+    "redirecting_one": "Redirecting in {{count}} second...",
+    "redirecting_other": "Redirecting in {{count}} seconds...",
+    "redirectDescription": "You will be taken back to the collection page to view your full history."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist.",
+    "redirecting_one": "Redirecting in {{count}} second.",
+    "redirecting_other": "Redirecting in {{count}} seconds."
+  },
+  "profile": {
+    "description": "View and manage your {{appName}} profile details.",
+    "loadingProfile": "Loading profile...",
+    "detailsPending": "Account details will appear here.",
+    "edit": "Edit profile",
+    "loading": "Loading account information...",
+    "basic": "Basic information",
+    "realName": "Real name",
+    "displayName": "Display name",
+    "username": "Username",
+    "placeOfBirth": "Place of birth",
+    "dateOfBirth": "Date of birth",
+    "gender": "Gender",
+    "contact": "Contact",
+    "phone": "Phone",
+    "domicileAddress": "Domicile address",
+    "sameDomicile": "Domicile address is the same as KTP address",
+    "ktpAddress": "KTP address",
+    "others": "Others",
+    "profession": "Profession",
+    "joined": "Joined",
+    "user": "User"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "EMAIL_AND_PASSWORD_ARE_REQUIRED": "Email and password are required.",
+    "INVALID_EMAIL_OR_PASSWORD": "Invalid email or password.",
+    "INVALID_REQUEST": "The request is invalid. Please try again.",
+    "INTERNAL_ERROR": "Something went wrong. Please try again."
+  }
+}

@@ -1,8 +1,10 @@
 import { env } from '@/config/env';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const NotFound: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const timeoutMs = Number(env.TIMEOUT_UI);
   const [secondsRemaining, setSecondsRemaining] = useState(Math.ceil(timeoutMs / 1000));
@@ -26,9 +28,9 @@ export const NotFound: React.FC = () => {
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 text-center">
       <p className="text-sm font-medium text-muted-foreground">404</p>
-      <h1 className="mt-2 text-3xl font-bold tracking-tight">Page not found</h1>
+      <h1 className="mt-2 text-3xl font-bold tracking-tight">{t('notFound.title')}</h1>
       <p className="mt-3 max-w-md text-muted-foreground">
-        The page you are looking for does not exist. <br />Redirecting in {secondsRemaining} seconds.
+        {t('notFound.description')} <br />{t('notFound.redirecting', { count: secondsRemaining })}
       </p>
     </div>
   );
