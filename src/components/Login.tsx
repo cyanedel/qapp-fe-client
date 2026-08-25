@@ -86,8 +86,10 @@ export const Login: React.FC = () => {
         <div className="relative hidden min-h-[620px] overflow-hidden bg-[#5B4BDB] p-12 text-left text-white lg:flex lg:flex-col lg:justify-between">
           <div className="relative">
             <span className="block text-5xl font-semibold tracking-[-0.06em] text-white">{appName}</span>
-            <p className="mt-16 max-w-sm text-4xl font-semibold leading-tight tracking-tight">{t('login.heroTitle')}</p>
-            <p className="mt-5 max-w-sm text-base leading-7 text-white/75">{t('login.heroDescription')}</p>
+            <div className="auth-hero-copy">
+              <p className="max-w-sm text-4xl font-semibold leading-tight tracking-tight">{t('login.heroTitle')}</p>
+              <p className="max-w-sm text-base leading-7 text-white/75">{t('login.heroDescription')}</p>
+            </div>
             <div className="mt-8 h-1.5 w-14 rounded-full bg-[#FF8A5B]" />
           </div>
           <div className="relative flex items-center gap-3 text-sm text-white/80">
