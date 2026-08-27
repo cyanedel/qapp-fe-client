@@ -10,7 +10,7 @@ import { QuizView } from "@/components/QuizView"
 import { Register } from "@/components/Register"
 import { UserDetails } from "@/components/UserDetails"
 import { ThemeProvider } from "@/components/ThemeProvider"
-import { AUTH_SESSION_EXPIRED_EVENT, validateCurrentSession } from "@/api/auth"
+import { AUTH_SESSION_EXPIRED_EVENT, startSessionRenewal, validateCurrentSession } from "@/api/auth"
 import { Spinner } from "@/components/ui/spinner"
 import { useAuthStore } from "@/store/useAuthStore"
 import { cn } from "@/lib/utils"
@@ -21,6 +21,8 @@ function App() {
   const location = useLocation()
   const { isAuthenticated, setUser, logout } = useAuthStore()
   const [authChecked, setAuthChecked] = useState(false)
+
+  useEffect(() => startSessionRenewal(), [])
 
   useEffect(() => {
     let isMounted = true
