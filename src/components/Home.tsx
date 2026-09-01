@@ -9,6 +9,7 @@ import { useCollectionStore } from '@/store/useCollectionStore';
 import { useQuestionStore } from '@/store/useQuestionStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { getCollectionList } from '@/api/collection';
+import { getCollectionAccessLabelKey } from '@/lib/collectionAccess';
 import { ArrowRight, BookOpen, Layers, Sparkles } from 'lucide-react';
 
 export const Home: React.FC = () => {
@@ -33,7 +34,7 @@ export const Home: React.FC = () => {
       }
 
       const mappedData: QuestionCollection[] = data.map((item: CollectionListItemDto)=>{
-        const { collectionid, org_id, display_name, title, description, search_tags, access_type, access_tag, can_access } = item
+        const { collectionid, org_id, display_name, title, description, search_tags, access_type, can_access } = item
         return {
           collectionID: collectionid,
           org_id,
@@ -42,7 +43,6 @@ export const Home: React.FC = () => {
           title: title,
           search_tags: search_tags ?? [],
           access_type,
-          access_tag,
           can_access,
         }
       })
@@ -63,13 +63,7 @@ export const Home: React.FC = () => {
     navigate("/collection?collectionid=" + collectionID, { state: { collection } });
   }
 
-  const accessLabel = (item: QuestionCollection) => {
-    if (item.can_access) return t('home.access.available')
-    if (item.access_type === 'premium') return t('home.access.premium')
-    if (item.access_type === 'public_org') return t('home.access.organizationMembers')
-    if (item.access_type === 'grant_org') return item.access_tag ? t('home.access.requiresTag', { tag: item.access_tag }) : t('home.access.organizationGrant')
-    return t('home.access.unavailable')
-  }
+  const accessLabel = (item: QuestionCollection) => t(getCollectionAccessLabelKey(item.access_type))
 
   return(
     <div className='container mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8'>

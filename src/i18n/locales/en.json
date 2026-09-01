@@ -85,21 +85,20 @@
     "emptyDescription": "Available collections will appear here once they are added.",
     "noDescription": "No description provided.",
     "publisher": "Publisher: {{publisher}}",
-    "more": "+{{count}} more",
-    "access": {
-      "available": "Available",
-      "premium": "Premium",
-      "organizationMembers": "Organization members",
-      "requiresTag": "Requires {{tag}}",
-      "organizationGrant": "Organization grant",
-      "unavailable": "Unavailable"
-    }
+    "more": "+{{count}} more"
+  },
+  "collectionAccessTypes": {
+    "public": "Public",
+    "premium": "Premium",
+    "public_org": "All Subscribers",
+    "grant_org": "Selected Subscribers"
   },
   "collection": {
     "loading": "Loading collection details...",
     "fallbackTitle": "Question Set",
     "overview": "Collection overview",
     "totalQuestions": "Total questions:",
+    "accessType": "Access type:",
     "attemptLimit": "Attempt limit:",
     "unlimited": "Unlimited",
     "attemptsUsed": "{{used}} / {{total}} used",
@@ -120,11 +119,10 @@
     "attemptNumber": "Attempt #{{number}}",
     "correctCount": "{{score}} / {{total}} correct",
     "accessDenied": {
+      "public": "This collection is not currently available to your account.",
       "premium": "This collection requires a premium purchase.",
-      "organizationMember": "You must be an active member of the organization to access this collection.",
-      "tag": "Your organization has not granted access through the {{tag}} access tag.",
-      "organization": "Your organization has not granted access to this collection.",
-      "default": "You do not currently have access to this collection."
+      "public_org": "You must be an active subscriber of this organization to access this collection.",
+      "grant_org": "You must be an active organization subscriber selected directly or through a subscriber group."
     }
   },
   "quiz": {

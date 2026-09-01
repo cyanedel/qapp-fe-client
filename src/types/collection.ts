@@ -13,7 +13,6 @@ export interface QuestionCollection {
   description: string
   search_tags: string[]
   access_type: CollectionAccessType
-  access_tag?: string | null
   can_access: boolean
 }
 
@@ -27,7 +26,6 @@ export interface CollectionListItemDto {
   title: string
   search_tags: string[]
   access_type: CollectionAccessType
-  access_tag?: string | null
   can_access: boolean
 }
 
@@ -57,10 +55,10 @@ export interface CollectionAccessResponse {
   code: string
   collection_id: string
   can_access: boolean
-  access_tag: string
+  access_type: CollectionAccessType
   attempts_used: number
-  max_attempts: number /** 0 means unlimited attempts. */
-  remaining_attempts: number
+  max_attempts: number | null /** 0 means unlimited attempts. */
+  remaining_attempts?: number | null
   message: string
 }
 

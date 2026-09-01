@@ -14,6 +14,7 @@ import { getCollectionByCollectionID, startQuiz } from '@/api/collection';
 import { getUserAccessStatus } from '@/api/user';
 import { getScoreHistory } from '@/api/history';
 import { ApiError } from '@/api/response'
+import { getCollectionAccessDeniedKey, getCollectionAccessLabelKey } from '@/lib/collectionAccess'
 
 const getScoreColor = (percentage: number): string => {
   if (percentage >= 80) return 'text-emerald-500'
@@ -57,9 +58,9 @@ export const CollectionInfo: React.FC = () => {
 
   const [canAccess, setCanAccess] = useState<boolean>(collectionSummary?.can_access ?? true)
   const [accessType, setAccessType] = useState<CollectionAccessType>(collectionSummary?.access_type ?? 'public')
-  const [accessTag, setAccessTag] = useState<string | null>(collectionSummary?.access_tag ?? null)
   const [attemptsUsed, setAttemptsUsed] = useState<number>(0)
   const [maxAttempts, setMaxAttempts] = useState<number | null>(null)
+  const [accessCode, setAccessCode] = useState<string>('')
   const [accessMessage, setAccessMessage] = useState<string>('')
 
   const [scoreHistory, setScoreHistory] = useState<ScoreHistory[]>([])
@@ -80,76 +81,107 @@ export const CollectionInfo: React.FC = () => {
       return dateString
     }
   }
-  const getAccessDeniedMessage = (type: CollectionAccessType, tag: string | null) => {
-    if (type === 'premium') return t('collection.accessDenied.premium')
-    if (type === 'public_org') return t('collection.accessDenied.organizationMember')
-    if (type === 'grant_org') return tag ? t('collection.accessDenied.tag', { tag }) : t('collection.accessDenied.organization')
-    return t('collection.accessDenied.default')
-  }
+  const accessDeniedMessage = accessCode === 'QUIZ_MAX_ATTEMPTS_REACHED' && accessMessage
+    ? t(`errors.${accessCode}`, { defaultValue: accessMessage })
+    : t(getCollectionAccessDeniedKey(accessType))
 
   useEffect(() => {
+    let isMounted = true
+
     if (!collectionIDFromUrl) {
       navigate('/home')
-      return
+      return () => { isMounted = false }
     }
 
     setCollectionID(collectionIDFromUrl)
+    setQuestionList([])
+    setScoreHistory([])
+    setScoreHistoryStore([])
+    setError(null)
+    setIsLoading(true)
+    setHistoryLoading(false)
+    setAccessCode('')
+    setAccessMessage('')
 
     if (collectionSummary) {
       setTitle(collectionSummary.title)
       setDescription(collectionSummary.description)
       setSearchTags(collectionSummary.search_tags ?? [])
       setAccessType(collectionSummary.access_type)
-      setAccessTag(collectionSummary.access_tag ?? null)
       setCanAccess(collectionSummary.can_access)
+    } else {
+      setTitle(t('collection.fallbackTitle'))
+      setDescription('')
+      setSearchTags([])
+      setCanAccess(false)
     }
 
-    getCollectionByCollectionID(collectionIDFromUrl).then((data)=>{
-      if (!data) {
-        if (!collectionSummary) setError(t('errors.COLLECTION_LOAD_FAILED', { defaultValue: t('errors.generic') }))
+    const loadCollection = async () => {
+      if (!user?.user_id) {
+        if (isMounted) {
+          setError(t('errors.AUTHENTICATION_REQUIRED', { defaultValue: t('errors.generic') }))
+          setIsLoading(false)
+        }
         return
       }
 
-      setTitle(data.Title || data.title || t('collection.fallbackTitle'))
-      setDescription(data.Description || data.description || '')
-      setSearchTags(data.SearchTags || data.search_tags || collectionSummary?.search_tags || [])
+      try {
+        const accessData = await getUserAccessStatus(collectionIDFromUrl)
+        if (!isMounted) return
 
-      const rawQuestions = data.Question || data.question || []
-      const mappedData: Question[] = rawQuestions.map((item: QuestionDto) => ({
-        id: item.ID ?? item.id ?? 0,
-        questionText: item.QuestionText ?? item.questionText ?? '',
-        options: item.Options ?? item.options ?? [],
-        correctAnswer: item.CorrectAnswer ?? item.correctAnswer ?? 0,
-      }))
-      setQuestionList(mappedData)
-    })
-    .catch((err) => {
-      console.error(err)
-      setError(t('errors.COLLECTION_LOAD_FAILED', { defaultValue: t('errors.generic') }))
-    })
-    .finally(() => {
-      setIsLoading(false)
-    })
+        setCanAccess(accessData.can_access)
+        setAccessType(accessData.access_type)
+        setAttemptsUsed(accessData.attempts_used)
+        setMaxAttempts(accessData.max_attempts)
+        setAccessCode(accessData.code ?? '')
+        setAccessMessage(accessData.message ?? '')
 
-    if (user?.user_id) {
-      getUserAccessStatus(collectionIDFromUrl)
-        .then((accessData) => {
-          setCanAccess(accessData.can_access)
-          setAttemptsUsed(accessData.attempts_used)
-          setMaxAttempts(accessData.max_attempts)
-          setAccessMessage(accessData.message ?? '')
-        })
-        .catch((err) => console.error('Access check failed:', err))
+        setHistoryLoading(true)
+        getScoreHistory(collectionIDFromUrl)
+          .then((history) => {
+            if (isMounted && history) {
+              setScoreHistory(history)
+              setScoreHistoryStore(history)
+            }
+          })
+          .catch((historyError) => console.error('History load failed:', historyError))
+          .finally(() => {
+            if (isMounted) setHistoryLoading(false)
+          })
 
-      setHistoryLoading(true)
-      getScoreHistory(collectionIDFromUrl)
-        .then((data) => {
-          if (data) {
-            setScoreHistory(data)
-            setScoreHistoryStore(data)
-          }
-        })
-        .finally(() => setHistoryLoading(false))
+        if (!accessData.can_access) return
+
+        const data = await getCollectionByCollectionID(collectionIDFromUrl)
+        if (!isMounted) return
+        if (!data) {
+          setError(t('errors.COLLECTION_LOAD_FAILED', { defaultValue: t('errors.generic') }))
+          return
+        }
+
+        setTitle(data.Title || data.title || t('collection.fallbackTitle'))
+        setDescription(data.Description || data.description || '')
+        setSearchTags(data.SearchTags || data.search_tags || collectionSummary?.search_tags || [])
+
+        const rawQuestions = data.Question || data.question || []
+        const mappedData: Question[] = rawQuestions.map((item: QuestionDto) => ({
+          id: item.ID ?? item.id ?? 0,
+          questionText: item.QuestionText ?? item.questionText ?? '',
+          options: item.Options ?? item.options ?? [],
+          correctAnswer: item.CorrectAnswer ?? item.correctAnswer ?? 0,
+        }))
+        setQuestionList(mappedData)
+      } catch (loadError) {
+        console.error('Collection access check failed:', loadError)
+        if (isMounted) setError(t('errors.COLLECTION_LOAD_FAILED', { defaultValue: t('errors.generic') }))
+      } finally {
+        if (isMounted) setIsLoading(false)
+      }
+    }
+
+    void loadCollection()
+
+    return () => {
+      isMounted = false
     }
   }, [collectionIDFromUrl, collectionSummary, setCollectionID, setQuestionList, navigate, user?.user_id, setScoreHistoryStore, t])
 
@@ -163,6 +195,15 @@ export const CollectionInfo: React.FC = () => {
 
     setIsStarting(true)
     try {
+      const accessData = await getUserAccessStatus(collectionIDFromUrl)
+      setCanAccess(accessData.can_access)
+      setAccessType(accessData.access_type)
+      setAttemptsUsed(accessData.attempts_used)
+      setMaxAttempts(accessData.max_attempts)
+      setAccessCode(accessData.code ?? '')
+      setAccessMessage(accessData.message ?? '')
+      if (!accessData.can_access) return
+
       const attemptId = await startQuiz(collectionIDFromUrl, user.user_id)
       if (!attemptId) throw new Error(t('errors.QUIZ_START_FAILED', { defaultValue: t('errors.generic') }))
       sessionStorage.setItem('current_attempt_id', attemptId)
@@ -236,6 +277,10 @@ export const CollectionInfo: React.FC = () => {
               <span>{t('collection.totalQuestions')}</span>
               <span className="font-bold text-primary">{questionList.length}</span>
             </div>
+            <div className="flex justify-between items-center text-sm pt-1 border-t border-border/50">
+              <span>{t('collection.accessType')}</span>
+              <span className="font-semibold">{t(getCollectionAccessLabelKey(accessType))}</span>
+            </div>
             {maxAttempts !== null && (
               <div className="flex justify-between items-center text-sm pt-1 border-t border-border/50">
                 <span>{t('collection.attemptLimit')}</span>
@@ -249,7 +294,7 @@ export const CollectionInfo: React.FC = () => {
           {user && !canAccess && (
             <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive font-medium">
               <ShieldAlert className="h-5 w-5 shrink-0" />
-              <span>{accessMessage || getAccessDeniedMessage(accessType, accessTag)}</span>
+              <span>{accessDeniedMessage}</span>
             </div>
           )}
 
