@@ -36,7 +36,7 @@
       "passwordRequired": "Masukkan kata sandi Anda."
     }
   },
-  "register": { "heroTitle": "Jadikan belajar terasa sebagai kemajuan.", "heroDescription": "Buat akun Anda dan jadikan setiap kuis kemenangan kecil.", "heroFooter": "Mulailah dengan sesuatu yang menarik", "successTitle": "Periksa email Anda", "successDescription": "Akun Anda telah dibuat. Periksa email dan buka tautan aktivasi sebelum masuk. Mengalihkan ke halaman masuk dalam {{seconds}} detik.", "goToSignIn": "Ke halaman masuk", "title": "Buat profil belajar Anda", "description": "Mulai perjalanan kuis Anda bersama {{appName}}.", "creating": "Membuat akun...", "register": "Daftar", "hasAccount": "Sudah punya akun?", "validation": { "emailRequired": "Masukkan alamat email Anda.", "emailInvalid": "Masukkan alamat email yang valid.", "passwordRequired": "Masukkan kata sandi Anda." } },
+  "register": { "heroTitle": "Jadikan belajar terasa sebagai kemajuan.", "heroDescription": "Buat akun Anda dan jadikan setiap kuis kemenangan kecil.", "heroFooter": "Mulailah dengan sesuatu yang menarik", "successTitle": "Periksa email Anda", "successDescription": "Akun Anda telah dibuat. Periksa email dan buka tautan aktivasi sebelum masuk. Mengalihkan ke halaman masuk dalam {{seconds}} detik.", "goToSignIn": "Ke halaman masuk", "title": "Buat profil belajar Anda", "description": "Mulai perjalanan kuis Anda bersama {{appName}}.", "passwordHint": "Gunakan setidaknya 12 karakter.", "creating": "Membuat akun...", "register": "Daftar", "hasAccount": "Sudah punya akun?", "validation": { "emailRequired": "Masukkan alamat email Anda.", "emailInvalid": "Masukkan alamat email yang valid.", "passwordRequired": "Masukkan kata sandi Anda." } },
   "emailVerification": { "verifyingTitle": "Memverifikasi email Anda", "verifyingDescription": "Harap tunggu sementara kami mengaktifkan akun Anda.", "verifiedTitle": "Email terverifikasi", "verifiedDescription": "Akun Anda sudah aktif. Anda sekarang dapat masuk.", "invalidTitle": "Tautan verifikasi tidak tersedia", "invalidDescription": "Tautan verifikasi ini tidak valid, kedaluwarsa, atau sudah digunakan.", "requestAnother": "Minta email verifikasi baru", "goToSignIn": "Ke halaman masuk" },
   "resendVerification": { "title": "Kirim ulang email verifikasi", "description": "Masukkan alamat email yang digunakan saat mendaftar.", "emailInvalid": "Masukkan alamat email yang valid.", "submit": "Kirim ulang email verifikasi", "submitting": "Meminta email...", "successTitle": "Periksa email Anda", "successDescription": "Jika ada akun belum terverifikasi yang memenuhi syarat, email verifikasi baru telah dikirim.", "goToSignIn": "Ke halaman masuk" },
   "nav": { "openAccountMenu": "Buka menu akun", "signIn": "Masuk", "register": "Daftar" },
@@ -52,6 +52,8 @@
     "EMAIL_AND_PASSWORD_ARE_REQUIRED": "Email dan kata sandi wajib diisi.",
     "INVALID_EMAIL_OR_PASSWORD": "Email atau kata sandi tidak valid.",
     "AUTH_EMAIL_NOT_VERIFIED": "Verifikasi email Anda sebelum masuk.",
+    "AUTH_PASSWORD_TOO_SHORT": "Kata sandi harus terdiri dari setidaknya 12 karakter.",
+    "AUTH_PASSWORD_TOO_LONG": "Kata sandi ini terlalu panjang. Gunakan kata sandi yang lebih pendek.",
     "INVALID_REQUEST": "Permintaan tidak valid. Silakan coba lagi.",
     "INTERNAL_ERROR": "Terjadi kesalahan. Silakan coba lagi."
   }

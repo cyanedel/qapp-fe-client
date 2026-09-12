@@ -53,6 +53,14 @@ export const Register: React.FC = () => {
       setError(t('register.validation.passwordRequired'))
       return
     }
+    if (Array.from(password).length < 12) {
+      setError(t('errors.AUTH_PASSWORD_TOO_SHORT'))
+      return
+    }
+    if (new TextEncoder().encode(password).length > 72) {
+      setError(t('errors.AUTH_PASSWORD_TOO_LONG'))
+      return
+    }
 
     setLoading(true)
 
@@ -169,6 +177,7 @@ export const Register: React.FC = () => {
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
+                  <p className="text-xs text-muted-foreground">{t('register.passwordHint')}</p>
                 </div>
 
                 <Button type="submit" className="mb-4 h-12 w-full bg-[#5B4BDB] font-semibold text-white hover:bg-[#4D3FC4]" disabled={loading}>

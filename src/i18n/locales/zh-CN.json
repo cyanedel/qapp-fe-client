@@ -36,7 +36,7 @@
       "passwordRequired": "请输入您的密码。"
     }
   },
-  "register": { "heroTitle": "让学习感受到进步。", "heroDescription": "创建您的账户，让每一次测验都成为小小的收获。", "heroFooter": "从好奇的事情开始", "successTitle": "请检查您的邮箱", "successDescription": "您的账户已创建。登录前，请检查邮箱并打开激活链接。将在 {{seconds}} 秒后跳转到登录页面。", "goToSignIn": "前往登录", "title": "创建您的学习档案", "description": "与{{appName}}一起开启您的测验之旅。", "creating": "正在创建账户...", "register": "注册", "hasAccount": "已有账户？", "validation": { "emailRequired": "请输入您的电子邮箱地址。", "emailInvalid": "请输入有效的电子邮箱地址。", "passwordRequired": "请输入您的密码。" } },
+  "register": { "heroTitle": "让学习感受到进步。", "heroDescription": "创建您的账户，让每一次测验都成为小小的收获。", "heroFooter": "从好奇的事情开始", "successTitle": "请检查您的邮箱", "successDescription": "您的账户已创建。登录前，请检查邮箱并打开激活链接。将在 {{seconds}} 秒后跳转到登录页面。", "goToSignIn": "前往登录", "title": "创建您的学习档案", "description": "与{{appName}}一起开启您的测验之旅。", "passwordHint": "请使用至少 12 个字符。", "creating": "正在创建账户...", "register": "注册", "hasAccount": "已有账户？", "validation": { "emailRequired": "请输入您的电子邮箱地址。", "emailInvalid": "请输入有效的电子邮箱地址。", "passwordRequired": "请输入您的密码。" } },
   "emailVerification": { "verifyingTitle": "正在验证您的邮箱", "verifyingDescription": "正在激活您的账户，请稍候。", "verifiedTitle": "邮箱已验证", "verifiedDescription": "您的账户已激活，现在可以登录。", "invalidTitle": "验证链接不可用", "invalidDescription": "此验证链接无效、已过期或已被使用。", "requestAnother": "申请新的验证邮件", "goToSignIn": "前往登录" },
   "resendVerification": { "title": "重新发送验证邮件", "description": "请输入注册时使用的电子邮箱地址。", "emailInvalid": "请输入有效的电子邮箱地址。", "submit": "重新发送验证邮件", "submitting": "正在请求邮件...", "successTitle": "请检查您的邮箱", "successDescription": "如果存在符合条件的未验证账户，新的验证邮件已发送。", "goToSignIn": "前往登录" },
   "nav": { "openAccountMenu": "打开账户菜单", "signIn": "登录", "register": "注册" },
@@ -52,6 +52,8 @@
     "EMAIL_AND_PASSWORD_ARE_REQUIRED": "请输入电子邮箱和密码。",
     "INVALID_EMAIL_OR_PASSWORD": "电子邮箱或密码无效。",
     "AUTH_EMAIL_NOT_VERIFIED": "登录前请先验证您的邮箱。",
+    "AUTH_PASSWORD_TOO_SHORT": "密码必须至少包含 12 个字符。",
+    "AUTH_PASSWORD_TOO_LONG": "此密码过长，请使用较短的密码。",
     "INVALID_REQUEST": "请求无效，请重试。",
     "INTERNAL_ERROR": "出现问题，请重试。"
   }

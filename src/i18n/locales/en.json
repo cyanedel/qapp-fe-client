@@ -59,6 +59,7 @@
     "goToSignIn": "Go to Sign In",
     "title": "Create your learning profile",
     "description": "Start building your quiz journey with {{appName}}.",
+    "passwordHint": "Use at least 12 characters.",
     "creating": "Creating account...",
     "register": "Register",
     "hasAccount": "Already have an account?",
@@ -201,6 +202,8 @@
     "EMAIL_AND_PASSWORD_ARE_REQUIRED": "Email and password are required.",
     "INVALID_EMAIL_OR_PASSWORD": "Invalid email or password.",
     "AUTH_EMAIL_NOT_VERIFIED": "Verify your email before signing in.",
+    "AUTH_PASSWORD_TOO_SHORT": "Password must contain at least 12 characters.",
+    "AUTH_PASSWORD_TOO_LONG": "This password is too long. Please use a shorter password.",
     "INVALID_REQUEST": "The request is invalid. Please try again.",
     "INTERNAL_ERROR": "Something went wrong. Please try again."
   }

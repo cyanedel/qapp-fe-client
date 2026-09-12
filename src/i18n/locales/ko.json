@@ -36,7 +36,7 @@
       "passwordRequired": "비밀번호를 입력하세요."
     }
   },
-  "register": { "heroTitle": "배움이 성장처럼 느껴지게 하세요.", "heroDescription": "계정을 만들고 모든 퀴즈를 작은 성취로 바꿔 보세요.", "heroFooter": "호기심 가는 것부터 시작하세요", "successTitle": "이메일을 확인하세요", "successDescription": "계정이 생성되었습니다. 로그인하기 전에 이메일의 활성화 링크를 여세요. {{seconds}}초 후 로그인 페이지로 이동합니다.", "goToSignIn": "로그인으로 이동", "title": "학습 프로필 만들기", "description": "{{appName}}와 함께 퀴즈 여정을 시작하세요.", "creating": "계정을 만드는 중...", "register": "회원가입", "hasAccount": "이미 계정이 있으신가요?", "validation": { "emailRequired": "이메일 주소를 입력하세요.", "emailInvalid": "유효한 이메일 주소를 입력하세요.", "passwordRequired": "비밀번호를 입력하세요." } },
+  "register": { "heroTitle": "배움이 성장처럼 느껴지게 하세요.", "heroDescription": "계정을 만들고 모든 퀴즈를 작은 성취로 바꿔 보세요.", "heroFooter": "호기심 가는 것부터 시작하세요", "successTitle": "이메일을 확인하세요", "successDescription": "계정이 생성되었습니다. 로그인하기 전에 이메일의 활성화 링크를 여세요. {{seconds}}초 후 로그인 페이지로 이동합니다.", "goToSignIn": "로그인으로 이동", "title": "학습 프로필 만들기", "description": "{{appName}}와 함께 퀴즈 여정을 시작하세요.", "passwordHint": "12자 이상 사용하세요.", "creating": "계정을 만드는 중...", "register": "회원가입", "hasAccount": "이미 계정이 있으신가요?", "validation": { "emailRequired": "이메일 주소를 입력하세요.", "emailInvalid": "유효한 이메일 주소를 입력하세요.", "passwordRequired": "비밀번호를 입력하세요." } },
   "emailVerification": { "verifyingTitle": "이메일을 인증하는 중입니다", "verifyingDescription": "계정을 활성화하는 동안 잠시 기다려 주세요.", "verifiedTitle": "이메일 인증 완료", "verifiedDescription": "계정이 활성화되었습니다. 이제 로그인할 수 있습니다.", "invalidTitle": "인증 링크를 사용할 수 없습니다", "invalidDescription": "이 인증 링크는 유효하지 않거나 만료되었거나 이미 사용되었습니다.", "requestAnother": "새 인증 이메일 요청", "goToSignIn": "로그인으로 이동" },
   "resendVerification": { "title": "인증 이메일 다시 보내기", "description": "가입할 때 사용한 이메일 주소를 입력하세요.", "emailInvalid": "유효한 이메일 주소를 입력하세요.", "submit": "인증 이메일 다시 보내기", "submitting": "이메일 요청 중...", "successTitle": "이메일을 확인하세요", "successDescription": "해당하는 미인증 계정이 있으면 새 인증 이메일이 전송되었습니다.", "goToSignIn": "로그인으로 이동" },
   "nav": { "openAccountMenu": "계정 메뉴 열기", "signIn": "로그인", "register": "회원가입" },
@@ -52,6 +52,8 @@
     "EMAIL_AND_PASSWORD_ARE_REQUIRED": "이메일과 비밀번호를 입력하세요.",
     "INVALID_EMAIL_OR_PASSWORD": "이메일 또는 비밀번호가 올바르지 않습니다.",
     "AUTH_EMAIL_NOT_VERIFIED": "로그인하기 전에 이메일을 인증하세요.",
+    "AUTH_PASSWORD_TOO_SHORT": "비밀번호는 12자 이상이어야 합니다.",
+    "AUTH_PASSWORD_TOO_LONG": "비밀번호가 너무 깁니다. 더 짧은 비밀번호를 사용하세요.",
     "INVALID_REQUEST": "요청이 올바르지 않습니다. 다시 시도해 주세요.",
     "INTERNAL_ERROR": "문제가 발생했습니다. 다시 시도해 주세요."
   }
