@@ -42,6 +42,7 @@
     "signingIn": "Signing in...",
     "noAccount": "Don't have an account?",
     "createAccount": "Create an account",
+    "resendVerification": "Resend verification email",
     "demoAccount": "Student {{number}}",
     "validation": {
       "emailRequired": "Please enter your email address.",
@@ -53,8 +54,8 @@
     "heroTitle": "Make learning feel like progress.",
     "heroDescription": "Create your account and turn every quiz into a small win.",
     "heroFooter": "Start with something curious",
-    "successTitle": "Registration successful",
-    "successDescription": "Your account has been created. Redirecting to sign in in {{seconds}} seconds.",
+    "successTitle": "Check your email",
+    "successDescription": "Your account has been created. Check your email and open the activation link before signing in. Redirecting to sign in in {{seconds}} seconds.",
     "goToSignIn": "Go to Sign In",
     "title": "Create your learning profile",
     "description": "Start building your quiz journey with {{appName}}.",
@@ -66,6 +67,26 @@
       "emailInvalid": "Enter a valid email address.",
       "passwordRequired": "Please enter your password."
     }
+  },
+  "emailVerification": {
+    "verifyingTitle": "Verifying your email",
+    "verifyingDescription": "Please wait while we activate your account.",
+    "verifiedTitle": "Email verified",
+    "verifiedDescription": "Your account is active. You can now sign in.",
+    "invalidTitle": "Verification link unavailable",
+    "invalidDescription": "This verification link is invalid, expired, or has already been used.",
+    "requestAnother": "Request another verification email",
+    "goToSignIn": "Go to Sign In"
+  },
+  "resendVerification": {
+    "title": "Resend verification email",
+    "description": "Enter the email address used to register.",
+    "emailInvalid": "Enter a valid email address.",
+    "submit": "Resend verification email",
+    "submitting": "Requesting email...",
+    "successTitle": "Check your email",
+    "successDescription": "If an eligible unverified account exists, a new verification email has been sent.",
+    "goToSignIn": "Go to Sign In"
   },
   "nav": {
     "openAccountMenu": "Open account menu",
@@ -179,6 +200,7 @@
     "generic": "Something went wrong. Please try again.",
     "EMAIL_AND_PASSWORD_ARE_REQUIRED": "Email and password are required.",
     "INVALID_EMAIL_OR_PASSWORD": "Invalid email or password.",
+    "AUTH_EMAIL_NOT_VERIFIED": "Verify your email before signing in.",
     "INVALID_REQUEST": "The request is invalid. Please try again.",
     "INTERNAL_ERROR": "Something went wrong. Please try again."
   }

@@ -8,6 +8,8 @@ import { NotFound } from "@/components/NotFound"
 import { QuizResult } from "@/components/QuizResult"
 import { QuizView } from "@/components/QuizView"
 import { Register } from "@/components/Register"
+import { EmailVerification } from "@/components/EmailVerification"
+import { ResendVerification } from "@/components/ResendVerification"
 import { UserDetails } from "@/components/UserDetails"
 import { ThemeProvider } from "@/components/ThemeProvider"
 import { AUTH_SESSION_EXPIRED_EVENT, startSessionRenewal, validateCurrentSession } from "@/api/auth"
@@ -50,41 +52,27 @@ function App() {
     return () => {
       isMounted = false
     }
-  }, [logout, setUser])
+  }, [location.pathname, logout, setUser])
 
   useEffect(() => {
     const handleSessionExpired = () => {
       logout()
-      navigate('/login', { replace: true })
+      if (!isAuthRoute(location.pathname)) {
+        navigate('/login', { replace: true })
+      }
     }
 
     window.addEventListener(AUTH_SESSION_EXPIRED_EVENT, handleSessionExpired)
     return () => window.removeEventListener(AUTH_SESSION_EXPIRED_EVENT, handleSessionExpired)
-  }, [logout, navigate])
+  }, [location.pathname, logout, navigate])
 
   useEffect(() => {
-    const isAuthRoute = location.pathname === '/login' || location.pathname === '/register'
+    const usesAuthSurface = isAuthRoute(location.pathname)
 
-    document.body.classList.toggle('login-light-surface', isAuthRoute)
+    document.body.classList.toggle('login-light-surface', usesAuthSurface)
 
     return () => document.body.classList.remove('login-light-surface')
   }, [location.pathname])
-
-  const ProtectedRoute = () => {
-    if (!authChecked) {
-      return <AuthLoading />
-    }
-
-    return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace state={{ from: location }} />;
-  };
-
-  const PublicOnlyRoute = () => {
-    if (!authChecked) {
-      return <AuthLoading />
-    }
-
-    return isAuthenticated ? <Navigate to="/home" replace /> : <Outlet />;
-  };
 
   return (
     <ThemeProvider>
@@ -94,15 +82,18 @@ function App() {
           isAuthRoute(location.pathname) ? "bg-[#FFF8E7] dark:bg-[#FFF8E7]" : "bg-background"
         )}
       >
-        {location.pathname !== '/login' && location.pathname !== '/register' && <NavBar />}
+        {!isAuthRoute(location.pathname) && <NavBar />}
         <main className="flex-1">
           <Routes>
-            <Route element={<PublicOnlyRoute />}>
+            <Route path="/verify-email" element={<EmailVerification />} />
+            <Route path="/resend-verification" element={<ResendVerification />} />
+
+            <Route element={<PublicOnlyRoute authChecked={authChecked} isAuthenticated={isAuthenticated} />}>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
             </Route>
 
-            <Route element={<ProtectedRoute />}>
+            <Route element={<ProtectedRoute authChecked={authChecked} isAuthenticated={isAuthenticated} />}>
               <Route path="/" element={<Home />} />
               <Route path="/home" element={<Home />} />
               <Route path="/collection" element={<CollectionInfo />} />
@@ -119,7 +110,26 @@ function App() {
   )
 }
 
-const isAuthRoute = (pathname: string) => pathname === '/login' || pathname === '/register'
+const isEmailActionRoute = (pathname: string) => pathname === '/verify-email' || pathname === '/resend-verification'
+
+const isAuthRoute = (pathname: string) => pathname === '/login' || pathname === '/register' || isEmailActionRoute(pathname)
+
+interface RouteGuardProps {
+  authChecked: boolean
+  isAuthenticated: boolean
+}
+
+const ProtectedRoute = ({ authChecked, isAuthenticated }: RouteGuardProps) => {
+  const location = useLocation()
+
+  if (!authChecked) return <AuthLoading />
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace state={{ from: location }} />
+}
+
+const PublicOnlyRoute = ({ authChecked, isAuthenticated }: RouteGuardProps) => {
+  if (!authChecked) return <AuthLoading />
+  return isAuthenticated ? <Navigate to="/home" replace /> : <Outlet />
+}
 
 const AuthLoading = () => {
   const { t } = useTranslation()

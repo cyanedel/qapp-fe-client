@@ -60,6 +60,10 @@ export const Login: React.FC = () => {
       setUser(data.user)
       navigate('/home')
     } catch (err: unknown) {
+      if (err instanceof ApiError && err.code === 'AUTH_EMAIL_NOT_VERIFIED') {
+        navigate(`/resend-verification?email=${encodeURIComponent(normalizedEmail)}`)
+        return
+      }
       const errorMessage = err instanceof ApiError
         ? t(`errors.${err.code}`, { defaultValue: t('errors.generic') })
         : t('errors.generic')
@@ -135,6 +139,9 @@ export const Login: React.FC = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">{t('login.passwordLabel')}</Label>
+                <Link to="/resend-verification" className="text-xs font-semibold text-[#5B4BDB] underline-offset-4 hover:underline">
+                  {t('login.resendVerification')}
+                </Link>
               </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

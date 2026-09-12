@@ -112,6 +112,24 @@ export const registerUser = async (email: string, password: string): Promise<Aut
   return readApiResponse<AuthResponse>(response, 'Failed to register account')
 }
 
+export const verifyEmail = async (token: string): Promise<ApiResponse> => {
+  const response = await fetch(`${env.API_URL}/auth/email/verify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token }),
+  })
+  return readApiResponse<ApiResponse>(response, 'Failed to verify email')
+}
+
+export const resendEmailVerification = async (email: string): Promise<ApiResponse> => {
+  const response = await fetch(`${env.API_URL}/auth/email/resend`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  })
+  return readApiResponse<ApiResponse>(response, 'Failed to request another verification email')
+}
+
 export const getCurrentUser = async (): Promise<User> => {
   const response = await authenticatedFetch(`${env.API_URL}/auth/me`, { method: 'GET' })
   const data = await response.json() as MeResponse
