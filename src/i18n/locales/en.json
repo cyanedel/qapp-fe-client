@@ -57,16 +57,19 @@
     "successTitle": "Check your email",
     "successDescription": "Your account has been created. Check your email and open the activation link before signing in. Redirecting to sign in in {{seconds}} seconds.",
     "goToSignIn": "Go to Sign In",
-    "title": "Create your learning profile",
+    "title": "Register to <appName>{{appName}}</appName>",
     "description": "Start building your quiz journey with {{appName}}.",
     "passwordHint": "Use at least 12 characters.",
+    "confirmPassword": "Confirm password",
     "creating": "Creating account...",
     "register": "Register",
     "hasAccount": "Already have an account?",
     "validation": {
       "emailRequired": "Please enter your email address.",
       "emailInvalid": "Enter a valid email address.",
-      "passwordRequired": "Please enter your password."
+      "passwordRequired": "Please enter your password.",
+      "confirmPasswordRequired": "Please confirm your password.",
+      "passwordsDoNotMatch": "Passwords do not match."
     }
   },
   "emailVerification": {

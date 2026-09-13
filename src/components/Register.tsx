@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,7 +19,9 @@ export const Register: React.FC = () => {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [registered, setRegistered] = useState(false)
@@ -61,6 +63,14 @@ export const Register: React.FC = () => {
       setError(t('errors.AUTH_PASSWORD_TOO_LONG'))
       return
     }
+    if (!confirmPassword) {
+      setError(t('register.validation.confirmPasswordRequired'))
+      return
+    }
+    if (password !== confirmPassword) {
+      setError(t('register.validation.passwordsDoNotMatch'))
+      return
+    }
 
     setLoading(true)
 
@@ -83,7 +93,7 @@ export const Register: React.FC = () => {
       <div className="pointer-events-none absolute -bottom-32 -right-20 h-96 w-96 rounded-full bg-[#FF8A5B]/20 blur-3xl" />
       <LanguageSelector className="absolute right-4 top-4 z-20 sm:right-6 sm:top-6" />
 
-      <div className="relative grid w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white/70 shadow-2xl shadow-[#5B4BDB]/15 ring-1 ring-[#5B4BDB]/10 backdrop-blur-sm lg:h-[620px] lg:grid-cols-[1.05fr_0.95fr]">
+      <div className="relative grid w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white/70 shadow-2xl shadow-[#5B4BDB]/15 ring-1 ring-[#5B4BDB]/10 backdrop-blur-sm lg:min-h-[620px] lg:grid-cols-[1.05fr_0.95fr]">
         <div className="relative hidden min-h-[620px] overflow-hidden bg-[#5B4BDB] p-12 text-left text-white lg:flex lg:flex-col lg:justify-between">
           <div className="relative">
             <span className="block text-5xl font-semibold tracking-[-0.06em] text-white">{appName}</span>
@@ -121,10 +131,13 @@ export const Register: React.FC = () => {
         ) : (
           <>
             <CardHeader className="space-y-2 text-center pb-6">
-              <div className="mx-auto flex w-32 items-center justify-center">
-                <span className="text-4xl font-semibold tracking-[-0.06em] text-[#5146C7]">{appName}</span>
-              </div>
-              <CardTitle className="text-3xl font-bold tracking-tight text-[#252238]">{t('register.title')}</CardTitle>
+              <CardTitle className="text-3xl font-bold tracking-tight text-[#252238]">
+                <Trans
+                  i18nKey="register.title"
+                  values={{ appName }}
+                  components={{ appName: <span className="text-4xl font-semibold tracking-[-0.06em] text-[#5146C7]" /> }}
+                />
+              </CardTitle>
               <CardDescription className="text-[#6D6880]">
                 {t('register.description', { appName })}
               </CardDescription>
@@ -162,6 +175,7 @@ export const Register: React.FC = () => {
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
+                      autoComplete="new-password"
                       placeholder="••••••••"
                       className="border-[#E7E2F4] bg-white pl-9 pr-10 text-[#252238] placeholder:text-[#9A94AA] focus-visible:border-[#5B4BDB] focus-visible:ring-[#5B4BDB]/20"
                       value={password}
@@ -177,7 +191,32 @@ export const Register: React.FC = () => {
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
-                  <p className="text-xs text-muted-foreground">{t('register.passwordHint')}</p>
+                  {/* <p className="text-xs text-muted-foreground">{t('register.passwordHint')}</p> */}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password">{t('register.confirmPassword')}</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="confirm-password"
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      autoComplete="new-password"
+                      placeholder="••••••••"
+                      className="border-[#E7E2F4] bg-white pl-9 pr-10 text-[#252238] placeholder:text-[#9A94AA] focus-visible:border-[#5B4BDB] focus-visible:ring-[#5B4BDB]/20"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      disabled={loading}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      aria-label={showConfirmPassword ? t('login.hidePassword') : t('login.showPassword')}
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                 </div>
 
                 <Button type="submit" className="mb-4 h-12 w-full bg-[#5B4BDB] font-semibold text-white hover:bg-[#4D3FC4]" disabled={loading}>
