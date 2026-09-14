@@ -2,6 +2,7 @@ import { env } from '@/config/env';
 import type { User } from '@/types/auth';
 import { collectAccessLogInfo } from '@/lib/accessLogInfo';
 import { ApiError, type ApiResponse, readApiResponse } from '@/api/response';
+import { apiFetch } from '@/api/request';
 
 type AuthResponse = ApiResponse<{ user: User }>
 type MeResponse = ApiResponse<{ user: User }>
@@ -31,7 +32,7 @@ const notifySessionExpired = () => {
 
 const refreshSession = async (): Promise<RenewalResult> => {
   try {
-    const response = await fetch(`${env.API_URL}/auth/refresh`, {
+    const response = await apiFetch(`${env.API_URL}/auth/refresh`, {
       method: 'POST',
       credentials: 'include',
     })
@@ -57,11 +58,11 @@ const renewSession = () => {
 
 export const authenticatedFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
   const requestInit = { ...init, credentials: 'include' as const }
-  const response = await fetch(input, requestInit)
+  const response = await apiFetch(input, requestInit)
   if (response.status !== 401) return response
 
   const result = await renewSession()
-  if (result === 'renewed') return fetch(input, requestInit)
+  if (result === 'renewed') return apiFetch(input, requestInit)
   if (result === 'rejected') notifySessionExpired()
   return response
 }
@@ -90,7 +91,7 @@ export const startSessionRenewal = () => {
 }
 
 export const loginUser = async (email: string, password: string): Promise<AuthResponse> => {
-  const response = await fetch(`${env.API_URL}/auth/login`, {
+  const response = await apiFetch(`${env.API_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -104,7 +105,7 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
 }
 
 export const registerUser = async (email: string, password: string): Promise<AuthResponse> => {
-  const response = await fetch(`${env.API_URL}/auth/register`, {
+  const response = await apiFetch(`${env.API_URL}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
@@ -113,7 +114,7 @@ export const registerUser = async (email: string, password: string): Promise<Aut
 }
 
 export const verifyEmail = async (token: string): Promise<ApiResponse> => {
-  const response = await fetch(`${env.API_URL}/auth/email/verify`, {
+  const response = await apiFetch(`${env.API_URL}/auth/email/verify`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token }),
@@ -122,7 +123,7 @@ export const verifyEmail = async (token: string): Promise<ApiResponse> => {
 }
 
 export const resendEmailVerification = async (email: string): Promise<ApiResponse> => {
-  const response = await fetch(`${env.API_URL}/auth/email/resend`, {
+  const response = await apiFetch(`${env.API_URL}/auth/email/resend`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email }),
@@ -154,7 +155,7 @@ export const validateCurrentSession = async (): Promise<User | null> => {
 }
 
 export const logoutUser = async (): Promise<ApiResponse> => {
-  const response = await fetch(`${env.API_URL}/auth/logout`, {
+  const response = await apiFetch(`${env.API_URL}/auth/logout`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
